@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,22 +9,52 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 
-:root{
+[data-theme="dark"]{
   --bg:#04050a;
   --surface:#080c14;
   --card:#0d1220;
-  --border:#151e30;
-  --border2:#1a2540;
-  --text:#dde3f0;
-  --muted:#4a5568;
-  --muted2:#6b7fa0;
+  --border:#1a2540;
+  --border2:#1f2e4a;
+  --text:#e8edf8;
+  --text2:#c5cfe8;
+  --muted:#6b7fa0;
+  --muted2:#8a9bbf;
   --green:#00e5a0;
-  --green-bg:rgba(0,229,160,0.07);
+  --green-bg:rgba(0,229,160,0.08);
   --yellow:#ffb938;
-  --yellow-bg:rgba(255,185,56,0.07);
+  --yellow-bg:rgba(255,185,56,0.08);
   --red:#ff4560;
-  --red-bg:rgba(255,69,96,0.07);
+  --red-bg:rgba(255,69,96,0.08);
   --accent:#5b6ef5;
+  --accent2:#7c3aed;
+  --toggle-bg:#1a2540;
+  --toggle-icon:☀️;
+  --input-bg:#080c14;
+  --shadow:rgba(0,0,0,0.4);
+}
+
+[data-theme="light"]{
+  --bg:#f0f2f8;
+  --surface:#ffffff;
+  --card:#ffffff;
+  --border:#d4daea;
+  --border2:#c2ccdf;
+  --text:#0d1220;
+  --text2:#2a3550;
+  --muted:#7a8aaa;
+  --muted2:#4a5878;
+  --green:#00a572;
+  --green-bg:rgba(0,165,114,0.08);
+  --yellow:#c98000;
+  --yellow-bg:rgba(201,128,0,0.08);
+  --red:#d42040;
+  --red-bg:rgba(212,32,64,0.08);
+  --accent:#4a5ce0;
+  --accent2:#6325cc;
+  --toggle-bg:#d4daea;
+  --toggle-icon:🌙;
+  --input-bg:#f8f9fc;
+  --shadow:rgba(0,0,0,0.08);
 }
 
 body{
@@ -33,30 +63,25 @@ body{
   color:var(--text);
   min-height:100vh;
   overflow-x:hidden;
+  transition:background .3s,color .3s;
 }
 
-/* NOISE TEXTURE */
-body::before{
-  content:'';
-  position:fixed;
-  inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events:none;
-  z-index:0;
-  opacity:.4;
-}
-
-/* GRID LINES */
 body::after{
   content:'';
   position:fixed;
   inset:0;
   background-image:
-    linear-gradient(rgba(91,110,245,0.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(91,110,245,0.03) 1px,transparent 1px);
+    linear-gradient(rgba(91,110,245,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(91,110,245,0.025) 1px,transparent 1px);
   background-size:60px 60px;
   pointer-events:none;
   z-index:0;
+}
+
+[data-theme="light"] body::after{
+  background-image:
+    linear-gradient(rgba(91,110,245,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(91,110,245,0.04) 1px,transparent 1px);
 }
 
 .page{position:relative;z-index:1}
@@ -68,6 +93,8 @@ body::after{
   justify-content:space-between;
   padding:20px 40px;
   border-bottom:1px solid var(--border);
+  background:var(--surface);
+  position:sticky;top:0;z-index:100;
 }
 
 .brand{
@@ -75,23 +102,37 @@ body::after{
   font-size:20px;
   font-weight:800;
   letter-spacing:3px;
-  color:#fff;
+  color:var(--text);
 }
 
 .brand-tag{
   display:inline-block;
   font-size:9px;
-  font-weight:600;
+  font-weight:700;
   letter-spacing:1.5px;
   background:var(--green-bg);
   color:var(--green);
-  border:1px solid rgba(0,229,160,0.2);
+  border:1px solid rgba(0,229,160,0.3);
   padding:2px 8px;
   border-radius:4px;
   margin-left:10px;
   vertical-align:middle;
   font-family:'DM Sans',sans-serif;
 }
+
+.header-right{display:flex;align-items:center;gap:12px}
+
+.theme-toggle{
+  background:var(--toggle-bg);
+  border:1px solid var(--border);
+  border-radius:8px;
+  width:38px;height:38px;
+  cursor:pointer;
+  font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.theme-toggle:hover{border-color:var(--accent)}
 
 .header-cta{
   background:var(--accent);
@@ -106,7 +147,7 @@ body::after{
   letter-spacing:.3px;
   transition:all .2s;
 }
-.header-cta:hover{background:#4a5ce0;transform:translateY(-1px)}
+.header-cta:hover{opacity:.9;transform:translateY(-1px)}
 
 /* HERO */
 .hero{
@@ -129,6 +170,7 @@ body::after{
   border:1px solid var(--border2);
   padding:5px 14px;
   border-radius:20px;
+  background:var(--surface);
 }
 
 .hero-eyebrow-dot{
@@ -145,12 +187,15 @@ body::after{
 
 .hero-title{
   font-family:'Syne',sans-serif;
-  font-size:52px;
+  font-size:46px;
   font-weight:800;
-  line-height:1.05;
-  color:#fff;
+  line-height:1.08;
+  color:var(--text);
   margin-bottom:18px;
-  letter-spacing:-1px;
+  letter-spacing:-1.5px;
+  max-width:560px;
+  margin-left:auto;
+  margin-right:auto;
 }
 
 .hero-title em{
@@ -167,9 +212,71 @@ body::after{
 }
 
 .hero-proof{
-  font-size:12px;
+  font-size:13px;
   color:var(--muted);
   margin-top:8px;
+  font-weight:500;
+}
+
+/* HOW IT WORKS */
+.how-section{
+  max-width:780px;
+  margin:0 auto 40px;
+  padding:0 24px;
+}
+
+.section-title{
+  font-family:'Syne',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:2px;
+  color:var(--muted2);
+  text-transform:uppercase;
+  text-align:center;
+  margin-bottom:24px;
+}
+
+.steps-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+
+.step-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:24px 20px;
+  text-align:center;
+  transition:border-color .2s;
+}
+
+.step-card:hover{border-color:var(--accent)}
+
+.step-num{
+  width:40px;height:40px;
+  border-radius:12px;
+  background:var(--accent);
+  color:#fff;
+  font-family:'Syne',sans-serif;
+  font-size:18px;
+  font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;
+}
+
+.step-title{
+  font-family:'Syne',sans-serif;
+  font-size:15px;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:8px;
+}
+
+.step-desc{
+  font-size:13px;
+  color:var(--muted2);
+  line-height:1.6;
 }
 
 /* MAIN CARD */
@@ -184,6 +291,7 @@ body::after{
   border:1px solid var(--border2);
   border-radius:20px;
   overflow:hidden;
+  box-shadow:0 4px 24px var(--shadow);
 }
 
 /* INPUT SECTION */
@@ -210,10 +318,11 @@ body::after{
 
 .step-tag{
   font-size:11px;
-  color:var(--muted);
+  color:var(--muted2);
   background:var(--border);
   padding:3px 10px;
   border-radius:4px;
+  font-weight:600;
 }
 
 .inputs-grid{
@@ -223,34 +332,32 @@ body::after{
   margin-bottom:20px;
 }
 
-.field{
-  position:relative;
-}
+.field{position:relative}
 
 .field label{
   display:block;
-  font-size:11px;
-  font-weight:600;
-  letter-spacing:1px;
-  color:var(--muted2);
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.8px;
+  color:var(--text2);
   text-transform:uppercase;
-  margin-bottom:7px;
+  margin-bottom:5px;
 }
 
 .field-hint{
   display:block;
-  font-size:10px;
-  color:var(--muted);
+  font-size:12px;
+  color:var(--muted2);
   margin-bottom:7px;
-  font-style:italic;
+  line-height:1.4;
 }
 
 .field input{
   width:100%;
-  background:var(--surface);
+  background:var(--input-bg);
   border:1px solid var(--border2);
-  color:#fff;
-  padding:13px 16px;
+  color:var(--text);
+  padding:13px 40px 13px 16px;
   border-radius:10px;
   font-size:16px;
   font-family:'DM Sans',sans-serif;
@@ -261,8 +368,7 @@ body::after{
 .field input:focus{
   outline:none;
   border-color:var(--accent);
-  background:#0a0f1e;
-  box-shadow:0 0 0 3px rgba(91,110,245,0.1);
+  box-shadow:0 0 0 3px rgba(91,110,245,0.12);
 }
 
 .field input::placeholder{color:var(--muted)}
@@ -271,14 +377,26 @@ body::after{
   position:absolute;
   right:14px;
   bottom:14px;
-  font-size:12px;
-  color:var(--muted);
+  font-size:13px;
+  font-weight:600;
+  color:var(--muted2);
   pointer-events:none;
 }
 
+.error-msg{
+  font-size:12px;
+  color:var(--red);
+  margin-top:5px;
+  display:none;
+  font-weight:500;
+}
+
+.field.has-error input{border-color:var(--red)}
+.field.has-error .error-msg{display:block}
+
 .scan-btn{
   width:100%;
-  background:linear-gradient(135deg,#5b6ef5,#7c3aed);
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
   color:#fff;
   border:none;
   padding:16px;
@@ -289,21 +407,9 @@ body::after{
   font-family:'Syne',sans-serif;
   letter-spacing:.5px;
   transition:all .25s;
-  position:relative;
-  overflow:hidden;
 }
 
-.scan-btn::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);
-  opacity:0;
-  transition:opacity .2s;
-}
-
-.scan-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(91,110,245,0.35)}
-.scan-btn:hover::after{opacity:1}
+.scan-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(91,110,245,0.3)}
 .scan-btn:active{transform:translateY(0)}
 
 /* RESULT SECTION */
@@ -311,10 +417,9 @@ body::after{
   padding:36px;
   display:none;
 }
-
 .result-section.visible{display:block}
 
-/* SCORE DISPLAY */
+/* SCORE */
 .score-center{
   text-align:center;
   margin-bottom:36px;
@@ -326,69 +431,40 @@ body::after{
   margin-bottom:16px;
 }
 
-.score-ring{
-  transform:rotate(-90deg);
-  display:block;
-}
-
-.score-ring-bg{
-  fill:none;
-  stroke:var(--border2);
-  stroke-width:8;
-}
-
+.score-ring{transform:rotate(-90deg);display:block}
+.score-ring-bg{fill:none;stroke:var(--border2);stroke-width:8}
 .score-ring-fill{
-  fill:none;
-  stroke-width:8;
-  stroke-linecap:round;
-  transition:stroke-dashoffset 1.2s cubic-bezier(0.22,1,0.36,1), stroke .5s;
-  stroke-dasharray:440;
-  stroke-dashoffset:440;
+  fill:none;stroke-width:8;stroke-linecap:round;
+  transition:stroke-dashoffset 1.2s cubic-bezier(0.22,1,0.36,1),stroke .5s;
+  stroke-dasharray:440;stroke-dashoffset:440;
 }
 
 .score-inner{
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
 }
 
 .score-number{
   font-family:'Syne',sans-serif;
-  font-size:52px;
-  font-weight:800;
-  line-height:1;
-  color:#fff;
+  font-size:52px;font-weight:800;line-height:1;color:var(--text);
 }
 
 .score-label{
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:1.5px;
-  color:var(--muted2);
-  text-transform:uppercase;
-  margin-top:4px;
+  font-size:11px;font-weight:700;letter-spacing:1.5px;
+  color:var(--muted2);text-transform:uppercase;margin-top:4px;
 }
 
 .verdict-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 20px;
-  border-radius:30px;
-  font-family:'Syne',sans-serif;
-  font-size:14px;
-  font-weight:700;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  margin-bottom:12px;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 20px;border-radius:30px;
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;
 }
 
-.verdict-safe{background:var(--green-bg);color:var(--green);border:1px solid rgba(0,229,160,0.25)}
-.verdict-warning{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(255,185,56,0.25)}
-.verdict-danger{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,69,96,0.25)}
+.verdict-safe{background:var(--green-bg);color:var(--green);border:1px solid rgba(0,229,160,0.3)}
+.verdict-warning{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(255,185,56,0.3)}
+.verdict-danger{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,69,96,0.3)}
 
 .verdict-dot{width:8px;height:8px;border-radius:50%}
 .verdict-safe .verdict-dot{background:var(--green)}
@@ -396,45 +472,29 @@ body::after{
 .verdict-danger .verdict-dot{background:var(--red);animation:pulse 1s infinite}
 
 .insight-line{
-  font-size:16px;
-  color:var(--muted2);
-  line-height:1.6;
-  max-width:480px;
-  margin:0 auto;
+  font-size:16px;color:var(--muted2);line-height:1.7;
+  max-width:480px;margin:0 auto;
 }
+.insight-line strong{color:var(--text);font-weight:600}
 
-.insight-line strong{color:#fff;font-weight:600}
-
-/* METRICS STRIP */
+/* METRICS */
 .metrics-strip{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  margin-bottom:28px;
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;margin-bottom:28px;
 }
 
 .metric-box{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:16px;
-  text-align:center;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:18px;text-align:center;
 }
 
 .metric-box-label{
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:1px;
-  color:var(--muted);
-  text-transform:uppercase;
-  margin-bottom:6px;
+  font-size:11px;font-weight:700;letter-spacing:.8px;
+  color:var(--muted2);text-transform:uppercase;margin-bottom:8px;
 }
 
 .metric-box-value{
-  font-family:'Syne',sans-serif;
-  font-size:22px;
-  font-weight:700;
-  color:#fff;
+  font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);
 }
 
 .metric-box-value.green{color:var(--green)}
@@ -442,337 +502,304 @@ body::after{
 .metric-box-value.red{color:var(--red)}
 
 /* COLLAPSE BAR */
-.collapse-section{
-  margin-bottom:28px;
-}
+.collapse-section{margin-bottom:28px}
 
 .collapse-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:10px;
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
 }
 
 .collapse-title{
-  font-size:12px;
-  font-weight:600;
-  letter-spacing:.8px;
-  color:var(--muted2);
-  text-transform:uppercase;
+  font-size:13px;font-weight:700;letter-spacing:.5px;
+  color:var(--text2);text-transform:uppercase;
 }
 
 .collapse-pct{
-  font-family:'Syne',sans-serif;
-  font-size:20px;
-  font-weight:700;
+  font-family:'Syne',sans-serif;font-size:20px;font-weight:700;
 }
 
 .bar-track{
-  height:8px;
-  background:var(--border);
-  border-radius:4px;
-  overflow:hidden;
-  margin-bottom:6px;
+  height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:8px;
 }
 
 .bar-fill{
-  height:100%;
-  width:0%;
-  border-radius:4px;
+  height:100%;width:0%;border-radius:4px;
   transition:width 1s cubic-bezier(0.22,1,0.36,1);
 }
 
 .bar-labels{
-  display:flex;
-  justify-content:space-between;
-  font-size:10px;
-  color:var(--muted);
+  display:flex;justify-content:space-between;
+  font-size:12px;color:var(--muted2);font-weight:500;
 }
 
 /* SIMULATION */
 .simulation-section{
-  background:var(--surface);
-  border:1px solid var(--border2);
-  border-radius:14px;
-  padding:22px;
-  margin-bottom:24px;
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:14px;padding:24px;margin-bottom:24px;
 }
 
 .sim-title{
-  font-size:12px;
-  font-weight:600;
-  letter-spacing:.8px;
-  color:var(--muted2);
-  text-transform:uppercase;
-  margin-bottom:18px;
+  font-size:13px;font-weight:700;letter-spacing:.5px;
+  color:var(--text2);text-transform:uppercase;margin-bottom:18px;
 }
 
 .sliders-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
-  margin-bottom:20px;
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:20px;
 }
 
 .slider-field label{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:12px;
-  color:var(--muted2);
-  margin-bottom:8px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:13px;color:var(--muted2);margin-bottom:10px;font-weight:500;
 }
 
 .slider-field label span{
-  font-family:'Syne',sans-serif;
-  font-size:14px;
-  font-weight:700;
-  color:#fff;
+  font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);
 }
 
 input[type=range]{
-  -webkit-appearance:none;
-  width:100%;
-  height:4px;
-  border-radius:2px;
-  background:var(--border2);
-  outline:none;
+  -webkit-appearance:none;width:100%;height:4px;
+  border-radius:2px;background:var(--border2);outline:none;
 }
 
 input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  width:16px;height:16px;
-  border-radius:50%;
-  background:var(--accent);
-  cursor:pointer;
-  box-shadow:0 0 8px rgba(91,110,245,0.5);
+  -webkit-appearance:none;width:16px;height:16px;
+  border-radius:50%;background:var(--accent);cursor:pointer;
 }
 
 .sim-result{
-  text-align:center;
-  padding:16px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:var(--card);
+  text-align:center;padding:18px;border-radius:10px;
+  border:1px solid var(--border);background:var(--card);
 }
 
-.sim-result-label{font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:.5px}
+.sim-result-label{
+  font-size:12px;color:var(--muted2);margin-bottom:8px;
+  letter-spacing:.5px;font-weight:600;text-transform:uppercase;
+}
+
 .sim-result-value{
-  font-family:'Syne',sans-serif;
-  font-size:28px;
-  font-weight:800;
+  font-family:'Syne',sans-serif;font-size:28px;font-weight:800;
 }
 
 /* PRO GATE */
 .pro-gate{
-  border:1px solid var(--border2);
-  border-radius:14px;
-  padding:28px;
-  text-align:center;
-  position:relative;
-  overflow:hidden;
-  margin-bottom:20px;
-}
-
-.pro-gate::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(135deg,rgba(91,110,245,0.06),rgba(124,58,237,0.06));
-  pointer-events:none;
+  border:1px solid var(--border2);border-radius:14px;
+  padding:28px;text-align:center;position:relative;
+  overflow:hidden;margin-bottom:20px;
+  background:var(--surface);
 }
 
 .pro-gate-label{
-  display:inline-block;
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:1.5px;
-  background:rgba(91,110,245,0.15);
-  color:#a5b4fc;
-  border:1px solid rgba(91,110,245,0.3);
-  padding:3px 10px;
-  border-radius:4px;
-  text-transform:uppercase;
-  margin-bottom:14px;
+  display:inline-block;font-size:11px;font-weight:700;letter-spacing:1.5px;
+  background:rgba(91,110,245,0.12);color:var(--accent);
+  border:1px solid rgba(91,110,245,0.3);padding:3px 10px;
+  border-radius:4px;text-transform:uppercase;margin-bottom:14px;
 }
 
 .pro-gate-title{
-  font-family:'Syne',sans-serif;
-  font-size:20px;
-  font-weight:800;
-  color:#fff;
-  margin-bottom:8px;
+  font-family:'Syne',sans-serif;font-size:20px;font-weight:800;
+  color:var(--text);margin-bottom:8px;
 }
 
 .pro-gate-desc{
-  font-size:13px;
-  color:var(--muted2);
-  margin-bottom:20px;
-  line-height:1.6;
+  font-size:14px;color:var(--muted2);margin-bottom:20px;line-height:1.7;
 }
 
 .pro-features{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-bottom:22px;
-  text-align:left;
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px;text-align:left;
 }
 
 .pro-feature{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:13px;
-  color:var(--muted2);
-  padding:8px 12px;
-  background:rgba(255,255,255,0.02);
-  border:1px solid var(--border);
-  border-radius:8px;
+  display:flex;align-items:center;gap:8px;font-size:13px;
+  color:var(--text2);padding:9px 12px;
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  font-weight:500;
 }
 
-.pro-feature-dot{
-  width:6px;height:6px;
-  border-radius:50%;
-  background:var(--accent);
-  flex-shrink:0;
-}
+.pro-feature-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
 
 .pro-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  background:linear-gradient(135deg,#5b6ef5,#7c3aed);
-  color:#fff;
-  border:none;
-  padding:13px 32px;
-  border-radius:10px;
-  font-size:14px;
-  font-weight:700;
-  cursor:pointer;
-  font-family:'Syne',sans-serif;
-  letter-spacing:.5px;
-  transition:all .2s;
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;border:none;padding:13px 32px;border-radius:10px;
+  font-size:14px;font-weight:700;cursor:pointer;
+  font-family:'Syne',sans-serif;letter-spacing:.5px;transition:all .2s;
 }
+.pro-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(91,110,245,0.3)}
 
-.pro-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(91,110,245,0.4)}
+.pro-price{font-size:13px;color:var(--muted2);margin-top:10px;font-weight:500}
 
-.pro-price{
-  font-size:12px;
-  color:var(--muted);
-  margin-top:10px;
-}
-
-/* SHARE / DOWNLOAD */
-.actions-row{
-  display:flex;
-  gap:10px;
-}
+/* ACTIONS */
+.actions-row{display:flex;gap:10px}
 
 .action-btn{
-  flex:1;
-  background:var(--surface);
-  border:1px solid var(--border2);
-  color:var(--muted2);
-  padding:12px;
-  border-radius:10px;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  font-family:'DM Sans',sans-serif;
-  transition:all .2s;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
+  flex:1;background:var(--surface);border:1px solid var(--border2);
+  color:var(--text2);padding:13px;border-radius:10px;
+  font-size:13px;font-weight:600;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.action-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* FAQ */
+.faq-section{
+  max-width:780px;margin:0 auto 60px;padding:0 24px;
 }
 
-.action-btn:hover{border-color:var(--accent);color:var(--accent)}
+.faq-grid{display:flex;flex-direction:column;gap:12px}
+
+.faq-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;
+}
+
+.faq-question{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;cursor:pointer;
+  font-size:15px;font-weight:600;color:var(--text);
+  transition:background .15s;
+  user-select:none;
+}
+
+.faq-question:hover{background:var(--surface)}
+
+.faq-arrow{
+  font-size:18px;color:var(--muted2);
+  transition:transform .25s;font-weight:400;flex-shrink:0;
+}
+
+.faq-item.open .faq-arrow{transform:rotate(45deg)}
+
+.faq-answer{
+  max-height:0;overflow:hidden;
+  transition:max-height .3s ease,padding .3s;
+  padding:0 24px;
+  font-size:14px;color:var(--muted2);line-height:1.8;
+}
+
+.faq-item.open .faq-answer{
+  max-height:300px;padding:0 24px 20px;
+}
+
+.faq-answer strong{color:var(--text2);font-weight:600}
 
 /* MODAL */
 .modal-overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.8);
-  z-index:1000;
-  display:none;
-  align-items:center;
-  justify-content:center;
+  position:fixed;inset:0;background:rgba(0,0,0,.75);
+  z-index:1000;display:none;align-items:center;justify-content:center;
+  padding:20px;
 }
 .modal-overlay.open{display:flex}
+
 .modal-box{
-  background:#0d1220;
-  border:1px solid var(--border2);
-  border-radius:16px;
-  padding:36px;
-  width:440px;
-  max-width:90vw;
-  text-align:center;
-}
-.modal-icon{
-  font-size:32px;
-  margin-bottom:16px;
-  display:block;
-}
-.modal-title{
-  font-family:'Syne',sans-serif;
-  font-size:20px;
-  font-weight:800;
-  color:#fff;
-  margin-bottom:10px;
-}
-.modal-body{font-size:14px;color:var(--muted2);line-height:1.7;margin-bottom:24px}
-.modal-btn{
-  background:var(--accent);
-  border:none;color:#fff;
-  padding:12px 28px;
-  border-radius:8px;
-  font-size:14px;
-  font-weight:700;
-  cursor:pointer;
-  font-family:'Syne',sans-serif;
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:16px;padding:36px;width:440px;max-width:100%;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
 }
 
-/* SNAPSHOT (hidden, for download) */
+.modal-icon{font-size:32px;margin-bottom:16px;display:block}
+
+.modal-title{
+  font-family:'Syne',sans-serif;font-size:20px;font-weight:800;
+  color:var(--text);margin-bottom:10px;
+}
+
+.modal-body{font-size:14px;color:var(--muted2);line-height:1.8;margin-bottom:24px}
+.modal-body strong{color:var(--text);font-weight:600}
+
+.modal-btn{
+  background:var(--accent);border:none;color:#fff;
+  padding:12px 28px;border-radius:8px;font-size:14px;
+  font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;
+}
+
+/* SNAPSHOT */
 .snapshot-hidden{
-  position:fixed;
-  top:-9999px;
-  left:-9999px;
-  width:480px;
-  background:#0d1220;
-  padding:32px;
-  border-radius:16px;
-  border:1px solid var(--border2);
-  font-family:'DM Sans',sans-serif;
+  position:fixed;top:-9999px;left:-9999px;width:480px;
+  background:#0d1220;padding:32px;border-radius:16px;
+  border:1px solid #1a2540;font-family:'DM Sans',sans-serif;
 }
 
 /* FOOTER */
 .footer{
-  text-align:center;
-  padding:32px;
-  font-size:12px;
-  color:var(--muted);
+  text-align:center;padding:32px;
+  font-size:13px;color:var(--muted2);
   border-top:1px solid var(--border);
+  line-height:1.8;font-weight:500;
 }
-
-.footer a{color:var(--muted2);text-decoration:none}
+.footer a{color:var(--muted2);text-decoration:none;border-bottom:1px solid var(--border)}
+.footer a:hover{color:var(--accent)}
 
 /* MOBILE */
 @media(max-width:640px){
-  .header{padding:16px 20px}
-  .hero{padding:40px 20px 28px}
-  .hero-title{font-size:36px}
-  .main-card{padding:0 16px}
-  .input-section{padding:24px 20px}
+  .header{padding:14px 16px}
+  .hero{padding:36px 16px 24px}
+  .hero-title{font-size:34px}
+  .hero-sub{font-size:15px}
+  .steps-grid{grid-template-columns:1fr}
+  .main-card,.how-section,.faq-section{padding:0 12px}
+  .input-section{padding:20px 16px}
   .inputs-grid{grid-template-columns:1fr}
-  .result-section{padding:24px 20px}
+  .result-section{padding:20px 16px}
   .metrics-strip{grid-template-columns:1fr 1fr}
   .sliders-grid{grid-template-columns:1fr}
   .pro-features{grid-template-columns:1fr}
   .score-number{font-size:40px}
+  .actions-row{flex-direction:column}
+  .faq-question{font-size:14px;padding:16px 18px}
+  .faq-answer{padding:0 18px}
+  .faq-item.open .faq-answer{padding:0 18px 16px}
+}
+
+/* SPLASH SCREEN */
+.splash{
+  position:fixed;inset:0;
+  background:#04050a;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  z-index:9999;
+  animation:splashFade 0.5s ease 2.3s forwards;
+}
+.splash-logo{
+  font-family:'Syne',sans-serif;
+  font-size:48px;font-weight:800;
+  letter-spacing:8px;color:#fff;
+  animation:splashIn 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+  opacity:0;
+}
+.splash-line{
+  width:0px;height:2px;
+  background:#5b6ef5;margin-top:16px;
+  animation:splashLine 0.6s cubic-bezier(0.22,1,0.36,1) 0.5s forwards;
+}
+.splash-tagline{
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:600;
+  letter-spacing:3px;color:#4a5568;
+  text-transform:uppercase;margin-top:14px;
+  opacity:0;
+  animation:splashIn 0.5s ease 0.9s forwards;
+}
+@keyframes splashIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes splashLine{
+  from{width:0px}
+  to{width:120px}
+}
+@keyframes splashFade{
+  from{opacity:1;pointer-events:all}
+  to{opacity:0;pointer-events:none}
 }
 </style>
 </head>
 <body>
+<!-- SPLASH SCREEN -->
+<div class="splash" id="splash">
+  <div class="splash-logo">AXOVERA</div>
+  <div class="splash-line"></div>
+  <div class="splash-tagline">Structural Risk Engine</div>
+</div>
+
 <div class="page">
 
 <!-- HEADER -->
@@ -781,9 +808,12 @@ input[type=range]::-webkit-slider-thumb{
     AXOVERA
     <span class="brand-tag">FREE</span>
   </div>
-  <button class="header-cta" onclick="document.getElementById('proModal').classList.add('open')">
-    Unlock Pro — $19
-  </button>
+  <div class="header-right">
+    <button class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">☀️</button>
+    <button class="header-cta" onclick="document.getElementById('proModal').classList.add('open')">
+      Unlock Pro — $29
+    </button>
+  </div>
 </div>
 
 <!-- HERO -->
@@ -801,6 +831,28 @@ input[type=range]::-webkit-slider-thumb{
   <p class="hero-proof">Used by 1,000+ media buyers and ecom store owners</p>
 </div>
 
+<!-- HOW IT WORKS -->
+<div class="how-section">
+  <div class="section-title">How It Works</div>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-title">Enter 4 Numbers</div>
+      <p class="step-desc">Your AOV, Conversion Rate, Cost of Goods, and Cost Per Click. That's all we need.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-title">Get Your Score</div>
+      <p class="step-desc">Axovera calculates your Structural Fragility Score — how close your ad system is to collapse.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-title">Take Action</div>
+      <p class="step-desc">See your break-even point, simulate market shocks, and unlock Pro for a full diagnosis and action plan.</p>
+    </div>
+  </div>
+</div>
+
 <!-- MAIN CARD -->
 <div class="main-card">
 <div class="scanner-box">
@@ -813,41 +865,42 @@ input[type=range]::-webkit-slider-thumb{
     </div>
 
     <div class="inputs-grid">
-      <div class="field">
+      <div class="field" id="fieldAov">
         <label>AOV — Average Order Value</label>
         <span class="field-hint">What's your average sale amount?</span>
         <input type="number" id="aov" placeholder="120" min="0">
         <span class="field-prefix">$</span>
+        <div class="error-msg" id="errAov">Please enter a valid amount</div>
       </div>
-      <div class="field">
+      <div class="field" id="fieldCvr">
         <label>CVR — Conversion Rate</label>
         <span class="field-hint">% of clicks that become sales</span>
         <input type="number" id="cvr" placeholder="3.5" min="0" max="100" step="0.1">
         <span class="field-prefix">%</span>
+        <div class="error-msg" id="errCvr">Enter a value between 0 and 100</div>
       </div>
-      <div class="field">
+      <div class="field" id="fieldCogs">
         <label>COGS — Cost of Goods Sold</label>
         <span class="field-hint">What does one sale cost you to fulfill?</span>
         <input type="number" id="cogs" placeholder="40" min="0">
         <span class="field-prefix">$</span>
+        <div class="error-msg" id="errCogs">Please enter a valid amount</div>
       </div>
-      <div class="field">
+      <div class="field" id="fieldCpc">
         <label>CPC — Cost Per Click</label>
         <span class="field-hint">What you're paying per ad click</span>
         <input type="number" id="cpc" placeholder="1.80" min="0" step="0.01">
         <span class="field-prefix">$</span>
+        <div class="error-msg" id="errCpc">Please enter a valid amount</div>
       </div>
     </div>
 
-    <button class="scan-btn" id="scanBtn">
-      Run Collapse Scan →
-    </button>
+    <button class="scan-btn" id="scanBtn">Run Collapse Scan →</button>
   </div>
 
   <!-- RESULTS -->
   <div class="result-section" id="resultSection">
 
-    <!-- SCORE RING -->
     <div class="score-center" id="scoreCard">
       <div class="score-ring-wrap">
         <svg class="score-ring" width="170" height="170" viewBox="0 0 170 170">
@@ -859,7 +912,6 @@ input[type=range]::-webkit-slider-thumb{
           <div class="score-label">Fragility</div>
         </div>
       </div>
-
       <div>
         <div class="verdict-badge" id="verdictBadge">
           <span class="verdict-dot"></span>
@@ -869,7 +921,6 @@ input[type=range]::-webkit-slider-thumb{
       <div class="insight-line" id="insightLine"></div>
     </div>
 
-    <!-- METRICS -->
     <div class="metrics-strip">
       <div class="metric-box">
         <div class="metric-box-label">Break-Even CPC</div>
@@ -885,7 +936,6 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <!-- COLLAPSE RISK BAR -->
     <div class="collapse-section">
       <div class="collapse-header">
         <span class="collapse-title">Collapse Risk from Volatility</span>
@@ -895,13 +945,10 @@ input[type=range]::-webkit-slider-thumb{
         <div class="bar-fill" id="collapseBar"></div>
       </div>
       <div class="bar-labels">
-        <span>Safe</span>
-        <span>Moderate</span>
-        <span>Extreme</span>
+        <span>Safe</span><span>Moderate</span><span>Extreme</span>
       </div>
     </div>
 
-    <!-- VOLATILITY SIMULATION -->
     <div class="simulation-section">
       <div class="sim-title">Live Volatility Shock</div>
       <div class="sliders-grid">
@@ -915,12 +962,11 @@ input[type=range]::-webkit-slider-thumb{
         </div>
       </div>
       <div class="sim-result">
-        <div class="sim-result-label">WORST-CASE PROFIT PER CLICK</div>
+        <div class="sim-result-label">Worst-Case Profit Per Click</div>
         <div class="sim-result-value" id="simResult">—</div>
       </div>
     </div>
 
-    <!-- PRO GATE -->
     <div class="pro-gate">
       <div class="pro-gate-label">Pro Analysis</div>
       <div class="pro-gate-title">See exactly why — and how to fix it</div>
@@ -933,35 +979,66 @@ input[type=range]::-webkit-slider-thumb{
         <div class="pro-feature"><span class="pro-feature-dot"></span>Risk Surface Heatmap</div>
         <div class="pro-feature"><span class="pro-feature-dot"></span>Scale Ceiling Engine</div>
         <div class="pro-feature"><span class="pro-feature-dot"></span>Structural Diagnosis</div>
-        <div class="pro-feature"><span class="pro-feature-dot"></span>Action Plan</div>
+        <div class="pro-feature"><span class="pro-feature-dot"></span>Full Action Plan</div>
       </div>
       <button class="pro-btn" onclick="document.getElementById('proModal').classList.add('open')">
-        Unlock Pro — $19 one-time
+        Unlock Pro — $29 one-time
       </button>
-      <div class="pro-price">One-time payment. No subscription. No BS.</div>
+      <div class="pro-price">One-time payment · No subscription · No BS</div>
     </div>
 
-    <!-- ACTIONS -->
     <div class="actions-row">
-      <button class="action-btn" id="downloadBtn">
-        ↓ Download Score Card
-      </button>
-      <button class="action-btn" onclick="shareTwitter()">
-        ↗ Share on Twitter
-      </button>
-      <button class="action-btn" onclick="shareTelegram()">
-        ↗ Share on Telegram
-      </button>
+      <button class="action-btn" id="downloadBtn">↓ Download Score Card</button>
+      <button class="action-btn" onclick="shareTwitter()">↗ Share on Twitter</button>
+      <button class="action-btn" onclick="shareTelegram()">↗ Share on Telegram</button>
     </div>
 
   </div>
 </div>
 </div>
 
+<!-- FAQ -->
+<div class="faq-section">
+  <div class="section-title">Frequently Asked Questions</div>
+  <div class="faq-grid">
+
+    <div class="faq-item">
+      <div class="faq-question">What is a Fragility Score? <span class="faq-arrow">+</span></div>
+      <div class="faq-answer">The Fragility Score (0–100) measures how structurally vulnerable your ad system is. A score of <strong>0–34 is Safe</strong> — your system has healthy profit margins and can absorb CPC increases. A score of <strong>35–64 is a Warning</strong> — you're profitable but one bad week could flip you negative. A score of <strong>65–100 is Collapse Risk</strong> — your system is either already losing money or one small shock away from it.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">What is Break-Even CPC? <span class="faq-arrow">+</span></div>
+      <div class="faq-answer">Break-Even CPC is the maximum you can pay per click before your campaign stops making money. It's calculated as: <strong>Net Margin × Conversion Rate</strong>. If your actual CPC is above this number, you're losing money on every click — even if your ROAS looks okay.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">What does CPC Headroom mean? <span class="faq-arrow">+</span></div>
+      <div class="faq-answer">CPC Headroom tells you how much your Cost Per Click can rise before you hit break-even. For example, a 40% headroom means your CPC can increase by 40% and you'll still be profitable. The lower this number, the more fragile your system is to platform price increases or increased competition.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">What is the Volatility Shock simulation? <span class="faq-arrow">+</span></div>
+      <div class="faq-answer">The Volatility Shock sliders let you simulate worst-case market conditions — like a CPC spike during peak season or a CVR drop from ad fatigue. It shows you exactly what your profit per click would be under those conditions, so you know in advance whether your system can survive.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">How is Axovera different from a ROAS calculator? <span class="faq-arrow">+</span></div>
+      <div class="faq-answer">ROAS calculators tell you what happened. Axovera tells you what's about to happen. We analyze the structural integrity of your ad system — stress-testing it across 9 scenarios to find hidden collapse risks that standard metrics completely miss. A 3x ROAS can still be a collapsing system. Axovera shows you why.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">What does Axovera Pro include? <span class="faq-arrow">+</span></div>
+      <div class="faq-answer">Pro gives you the full diagnostic suite: a <strong>9-scenario Stress Matrix</strong>, a <strong>Sensitivity Map</strong> showing which variable breaks your system fastest, a <strong>Risk Surface Heatmap</strong>, a <strong>Scale Ceiling Engine</strong> showing your max sustainable ad spend, a full <strong>Structural Diagnosis</strong>, and a prioritised <strong>Action Plan</strong> to fix what's broken. One-time payment of $29 — no subscription.</div>
+    </div>
+
+  </div>
+</div>
+
 <!-- FOOTER -->
 <div class="footer">
   <p>Axovera — Structural Risk Engine for Paid Traffic &nbsp;·&nbsp; <a href="#">Pro Version</a> &nbsp;·&nbsp; <a href="#">Docs</a></p>
-  <p style="margin-top:6px;font-size:11px">Not financial advice. Use as a strategic diagnostic tool.</p>
+  <p style="margin-top:6px;font-size:12px;color:var(--muted)">Not financial advice. Use as a strategic diagnostic tool only.</p>
 </div>
 
 </div><!-- end .page -->
@@ -971,28 +1048,28 @@ input[type=range]::-webkit-slider-thumb{
   <div style="font-family:'DM Sans',sans-serif;color:#dde3f0">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
       <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:2px;color:#fff">AXOVERA</div>
-      <div style="font-size:10px;color:#4a5568;letter-spacing:1px">AD COLLAPSE SCANNER</div>
+      <div style="font-size:11px;color:#6b7fa0;letter-spacing:1px;font-weight:600">AD COLLAPSE SCANNER</div>
     </div>
-    <div style="text-align:center;padding:20px 0;border-top:1px solid #151e30;border-bottom:1px solid #151e30;margin-bottom:20px">
+    <div style="text-align:center;padding:20px 0;border-top:1px solid #1a2540;border-bottom:1px solid #1a2540;margin-bottom:20px">
       <div style="font-size:64px;font-weight:800;font-family:'Syne',sans-serif;color:#fff;line-height:1" id="snapScore">—</div>
-      <div style="font-size:11px;letter-spacing:1.5px;color:#4a5568;margin-top:4px">FRAGILITY SCORE</div>
-      <div style="margin-top:12px;font-size:16px;font-weight:600" id="snapVerdict">—</div>
+      <div style="font-size:11px;letter-spacing:1.5px;color:#6b7fa0;margin-top:4px;font-weight:600">FRAGILITY SCORE</div>
+      <div style="margin-top:12px;font-size:16px;font-weight:700" id="snapVerdict">—</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
       <div style="text-align:center;padding:12px;background:#080c14;border-radius:8px">
-        <div style="font-size:10px;color:#4a5568;margin-bottom:4px">BREAK-EVEN CPC</div>
+        <div style="font-size:11px;color:#6b7fa0;margin-bottom:4px;font-weight:600">BREAK-EVEN CPC</div>
         <div style="font-size:18px;font-weight:700;color:#fff" id="snapBe">—</div>
       </div>
       <div style="text-align:center;padding:12px;background:#080c14;border-radius:8px">
-        <div style="font-size:10px;color:#4a5568;margin-bottom:4px">PROFIT/CLICK</div>
+        <div style="font-size:11px;color:#6b7fa0;margin-bottom:4px;font-weight:600">PROFIT/CLICK</div>
         <div style="font-size:18px;font-weight:700;color:#fff" id="snapProfit">—</div>
       </div>
       <div style="text-align:center;padding:12px;background:#080c14;border-radius:8px">
-        <div style="font-size:10px;color:#4a5568;margin-bottom:4px">HEADROOM</div>
+        <div style="font-size:11px;color:#6b7fa0;margin-bottom:4px;font-weight:600">HEADROOM</div>
         <div style="font-size:18px;font-weight:700;color:#fff" id="snapHeadroom">—</div>
       </div>
     </div>
-    <div style="text-align:center;font-size:11px;color:#4a5568;margin-top:16px">axovera.com — Structural Risk Engine for Paid Traffic</div>
+    <div style="text-align:center;font-size:12px;color:#6b7fa0;margin-top:16px;font-weight:500">axovera.com — Structural Risk Engine for Paid Traffic</div>
   </div>
 </div>
 
@@ -1000,8 +1077,8 @@ input[type=range]::-webkit-slider-thumb{
 <div class="modal-overlay" id="ecoModal">
   <div class="modal-box">
     <span class="modal-icon">⚠️</span>
-    <div class="modal-title">Structural Violation</div>
-    <div class="modal-body">Your COGS is equal to or higher than your AOV. This means your unit economics are negative before a single ad runs. No ad strategy can fix this — fix the product margin first.</div>
+    <div class="modal-title">Structural Violation Detected</div>
+    <div class="modal-body">Your <strong>COGS is equal to or higher than your AOV</strong>. This means your unit economics are negative before a single ad runs. No ad strategy can fix a broken margin — fix the product economics first, then come back.</div>
     <button class="modal-btn" onclick="document.getElementById('ecoModal').classList.remove('open')">Got it</button>
   </div>
 </div>
@@ -1012,191 +1089,206 @@ input[type=range]::-webkit-slider-thumb{
     <div class="modal-title">Axovera Pro</div>
     <div class="modal-body">
       Get the full structural risk suite — Scenario Matrix, Sensitivity Map, Risk Surface Heatmap, Scale Ceiling Engine, Structural Diagnosis and Action Plan.<br><br>
-      <strong style="color:#fff">$19 one-time. No subscription.</strong>
+      <strong>$29 one-time. No subscription. No BS.</strong>
     </div>
     <button class="modal-btn" onclick="document.getElementById('proModal').classList.remove('open')">Coming Soon — Notify Me</button>
-    <div style="margin-top:12px;font-size:12px;color:var(--muted)">Closes automatically when live</div>
+    <div style="margin-top:12px;font-size:13px;color:var(--muted)">We'll email you the moment it's live.</div>
   </div>
 </div>
 
 <script>
-let baseData = null;
+let baseData=null;
 
-const scanBtn = document.getElementById('scanBtn');
-const resultSection = document.getElementById('resultSection');
+// THEME TOGGLE
+const html=document.documentElement;
+const toggleBtn=document.getElementById('themeToggle');
+let isDark=true;
 
-// INPUTS reset results on change
-['aov','cvr','cogs','cpc'].forEach(id => {
-  document.getElementById(id).addEventListener('input', () => {
-    baseData = null;
+toggleBtn.addEventListener('click',()=>{
+  isDark=!isDark;
+  html.setAttribute('data-theme',isDark?'dark':'light');
+  toggleBtn.textContent=isDark?'☀️':'🌙';
+});
+
+// INPUTS
+const resultSection=document.getElementById('resultSection');
+['aov','cvr','cogs','cpc'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{
+    baseData=null;
     resultSection.classList.remove('visible');
+    clearError(id);
   });
 });
 
+function clearError(id){
+  const field=document.getElementById('field'+id.charAt(0).toUpperCase()+id.slice(1));
+  if(field) field.classList.remove('has-error');
+}
+
+function showError(id,msg){
+  const field=document.getElementById('field'+id.charAt(0).toUpperCase()+id.slice(1));
+  const err=document.getElementById('err'+id.charAt(0).toUpperCase()+id.slice(1));
+  if(field) field.classList.add('has-error');
+  if(err && msg) err.textContent=msg;
+}
+
 // SLIDERS
-const cpcSlider = document.getElementById('cpcShockSlider');
-const cvrSlider = document.getElementById('cvrShockSlider');
-cpcSlider.addEventListener('input', () => {
-  document.getElementById('cpcShockLabel').textContent = '+' + cpcSlider.value + '%';
+const cpcSlider=document.getElementById('cpcShockSlider');
+const cvrSlider=document.getElementById('cvrShockSlider');
+cpcSlider.addEventListener('input',()=>{
+  document.getElementById('cpcShockLabel').textContent='+'+cpcSlider.value+'%';
   updateSim();
 });
-cvrSlider.addEventListener('input', () => {
-  document.getElementById('cvrShockLabel').textContent = '−' + cvrSlider.value + '%';
+cvrSlider.addEventListener('input',()=>{
+  document.getElementById('cvrShockLabel').textContent='−'+cvrSlider.value+'%';
   updateSim();
 });
 
-function updateSim() {
-  if (!baseData) return;
-  const {net, cvr, cpc} = baseData;
-  const cpcShock = parseFloat(cpcSlider.value) / 100;
-  const cvrShock = parseFloat(cvrSlider.value) / 100;
-  const adjCpc = cpc * (1 + cpcShock);
-  const adjCvr = cvr * (1 - cvrShock);
-  const worstProfit = net * (adjCvr / 100) - adjCpc;
-  const el = document.getElementById('simResult');
-  el.textContent = (worstProfit >= 0 ? '+$' : '-$') + Math.abs(worstProfit).toFixed(3);
-  el.style.color = worstProfit > 0 ? 'var(--green)' : worstProfit > -0.1 ? 'var(--yellow)' : 'var(--red)';
+function updateSim(){
+  if(!baseData) return;
+  const{net,cvr,cpc}=baseData;
+  const cpcShock=parseFloat(cpcSlider.value)/100;
+  const cvrShock=parseFloat(cvrSlider.value)/100;
+  const adjCpc=cpc*(1+cpcShock);
+  const adjCvr=cvr*(1-cvrShock);
+  const worstProfit=net*(adjCvr/100)-adjCpc;
+  const el=document.getElementById('simResult');
+  el.textContent=(worstProfit>=0?'+$':'-$')+Math.abs(worstProfit).toFixed(3);
+  el.style.color=worstProfit>0?'var(--green)':worstProfit>-0.1?'var(--yellow)':'var(--red)';
 }
 
 // MAIN SCAN
-scanBtn.addEventListener('click', () => {
-  const aov = parseFloat(document.getElementById('aov').value);
-  const cvr = parseFloat(document.getElementById('cvr').value);
-  const cogs = parseFloat(document.getElementById('cogs').value);
-  const cpc = parseFloat(document.getElementById('cpc').value);
+document.getElementById('scanBtn').addEventListener('click',()=>{
+  const aov=parseFloat(document.getElementById('aov').value);
+  const cvr=parseFloat(document.getElementById('cvr').value);
+  const cogs=parseFloat(document.getElementById('cogs').value);
+  const cpc=parseFloat(document.getElementById('cpc').value);
 
-  if (isNaN(aov)||isNaN(cvr)||isNaN(cogs)||isNaN(cpc)) {
-    alert('Please fill in all 4 fields.');
-    return;
-  }
-  if (cogs >= aov) {
+  let valid=true;
+  if(isNaN(aov)||aov<=0){showError('aov','Please enter a valid amount greater than 0');valid=false;}
+  if(isNaN(cvr)||cvr<=0||cvr>100){showError('cvr','Enter a value between 0.01 and 100');valid=false;}
+  if(isNaN(cogs)||cogs<0){showError('cogs','Please enter a valid amount');valid=false;}
+  if(isNaN(cpc)||cpc<=0){showError('cpc','Please enter a valid amount greater than 0');valid=false;}
+  if(!valid) return;
+
+  if(cogs>=aov){
     document.getElementById('ecoModal').classList.add('open');
     return;
   }
 
-  const net = aov - cogs;
-  const ev = net * (cvr / 100);
-  const profit = ev - cpc;
-  const headroom = ((ev - cpc) / cpc) * 100;
+  const net=aov-cogs;
+  const ev=net*(cvr/100);
+  const profit=ev-cpc;
+  const headroom=((ev-cpc)/cpc)*100;
 
-  // collapse probability (9 scenarios)
-  let losses = 0;
-  [-10,-20,-30].forEach(cs => {
-    [10,20,30].forEach(ps => {
-      const p = net*(cvr*(1+cs/100)/100) - cpc*(1+ps/100);
-      if(p <= 0) losses++;
+  let losses=0;
+  [-10,-20,-30].forEach(cs=>{
+    [10,20,30].forEach(ps=>{
+      const p=net*(cvr*(1+cs/100)/100)-cpc*(1+ps/100);
+      if(p<=0) losses++;
     });
   });
-  const collapsePct = Math.round((losses/9)*100);
+  const collapsePct=Math.round((losses/9)*100);
 
-  // fragility score
-  let fragility = 0;
-  if (ev > 0) {
-    fragility = 100 - ((profit / ev) * 100);
-    fragility = Math.max(0, Math.min(100, fragility));
-  } else {
-    fragility = 100;
-  }
+  let fragility=0;
+  if(ev>0){
+    fragility=100-((profit/ev)*100);
+    fragility=Math.max(0,Math.min(100,fragility));
+  } else {fragility=100;}
 
-  baseData = {net, cvr, cpc, ev, profit};
-
-  // render
-  renderScore(Math.round(fragility), profit, ev, headroom, collapsePct);
+  baseData={net,cvr,cpc,ev,profit};
+  renderScore(Math.round(fragility),profit,ev,headroom,collapsePct);
   resultSection.classList.add('visible');
-  resultSection.scrollIntoView({behavior:'smooth', block:'start'});
+  resultSection.scrollIntoView({behavior:'smooth',block:'start'});
   updateSim();
 });
 
-function renderScore(fragility, profit, ev, headroom, collapsePct) {
-  // ring
-  const circumference = 440;
-  const offset = circumference - (fragility / 100) * circumference;
-  const ring = document.getElementById('ringFill');
-  const color = fragility < 35 ? '#00e5a0' : fragility < 65 ? '#ffb938' : '#ff4560';
-  ring.style.stroke = color;
-  setTimeout(() => { ring.style.strokeDashoffset = offset; }, 100);
+function renderScore(fragility,profit,ev,headroom,collapsePct){
+  const circumference=440;
+  const offset=circumference-(fragility/100)*circumference;
+  const ring=document.getElementById('ringFill');
+  const color=fragility<35?'var(--green)':fragility<65?'var(--yellow)':'var(--red)';
+  const hexColor=fragility<35?'#00e5a0':fragility<65?'#ffb938':'#ff4560';
+  ring.style.stroke=hexColor;
+  setTimeout(()=>{ring.style.strokeDashoffset=offset;},100);
 
-  // score number animation
-  const numEl = document.getElementById('scoreNumber');
-  numEl.style.color = color;
-  let current = 0;
-  const interval = setInterval(() => {
-    current = Math.min(current + Math.ceil(fragility / 25), fragility);
-    numEl.textContent = current;
-    if (current >= fragility) clearInterval(interval);
-  }, 40);
+  const numEl=document.getElementById('scoreNumber');
+  numEl.style.color=hexColor;
+  let current=0;
+  const interval=setInterval(()=>{
+    current=Math.min(current+Math.ceil(fragility/25),fragility);
+    numEl.textContent=current;
+    if(current>=fragility) clearInterval(interval);
+  },40);
 
-  // verdict
-  const badge = document.getElementById('verdictBadge');
-  const text = document.getElementById('verdictText');
-  badge.className = 'verdict-badge';
-  if (fragility < 35) {
-    badge.classList.add('verdict-safe');
-    text.textContent = 'SYSTEM SAFE';
-  } else if (fragility < 65) {
-    badge.classList.add('verdict-warning');
-    text.textContent = 'SYSTEM WARNING';
+  const badge=document.getElementById('verdictBadge');
+  const text=document.getElementById('verdictText');
+  badge.className='verdict-badge';
+  if(fragility<35){badge.classList.add('verdict-safe');text.textContent='SYSTEM SAFE';}
+  else if(fragility<65){badge.classList.add('verdict-warning');text.textContent='SYSTEM WARNING';}
+  else{badge.classList.add('verdict-danger');text.textContent='COLLAPSE RISK';}
+
+  const insight=document.getElementById('insightLine');
+  if(profit>0){
+    insight.innerHTML=`Your system earns <strong>$${profit.toFixed(3)}</strong> per click. CPC can rise <strong>${Math.max(0,headroom).toFixed(0)}%</strong> before you hit break-even.`;
   } else {
-    badge.classList.add('verdict-danger');
-    text.textContent = 'COLLAPSE RISK';
+    insight.innerHTML=`Your system is <strong>losing $${Math.abs(profit).toFixed(3)}</strong> per click. CPC needs to drop to <strong>$${ev.toFixed(2)}</strong> or lower to break even.`;
   }
 
-  // insight line
-  const insight = document.getElementById('insightLine');
-  if (profit > 0) {
-    insight.innerHTML = `Your system earns <strong>$${profit.toFixed(3)}</strong> per click. CPC can rise <strong>${Math.max(0,headroom).toFixed(0)}%</strong> before you hit break-even.`;
-  } else {
-    insight.innerHTML = `Your system is <strong>losing $${Math.abs(profit).toFixed(3)}</strong> per click. You need CPC to drop to <strong>$${ev.toFixed(2)}</strong> or lower.`;
-  }
+  document.getElementById('beValue').textContent='$'+ev.toFixed(2);
 
-  // metrics
-  document.getElementById('beValue').textContent = '$' + ev.toFixed(2);
-  document.getElementById('beValue').className = 'metric-box-value';
-  
-  const pEl = document.getElementById('profitValue');
-  pEl.textContent = (profit >= 0 ? '+$' : '-$') + Math.abs(profit).toFixed(3);
-  pEl.className = 'metric-box-value ' + (profit > 0.1 ? 'green' : profit > 0 ? 'yellow' : 'red');
+  const pEl=document.getElementById('profitValue');
+  pEl.textContent=(profit>=0?'+$':'-$')+Math.abs(profit).toFixed(3);
+  pEl.className='metric-box-value '+(profit>0.1?'green':profit>0?'yellow':'red');
 
-  const hEl = document.getElementById('headroomValue');
-  hEl.textContent = Math.max(0, headroom).toFixed(0) + '%';
-  hEl.className = 'metric-box-value ' + (headroom > 30 ? 'green' : headroom > 10 ? 'yellow' : 'red');
+  const hEl=document.getElementById('headroomValue');
+  hEl.textContent=Math.max(0,headroom).toFixed(0)+'%';
+  hEl.className='metric-box-value '+(headroom>30?'green':headroom>10?'yellow':'red');
 
-  // collapse bar
-  const bar = document.getElementById('collapseBar');
-  const pctEl = document.getElementById('collapseRiskPct');
-  bar.style.background = collapsePct < 35 ? 'var(--green)' : collapsePct < 65 ? 'var(--yellow)' : 'var(--red)';
-  pctEl.style.color = collapsePct < 35 ? 'var(--green)' : collapsePct < 65 ? 'var(--yellow)' : 'var(--red)';
-  setTimeout(() => { bar.style.width = collapsePct + '%'; }, 200);
-  pctEl.textContent = collapsePct + '%';
+  const bar=document.getElementById('collapseBar');
+  const pctEl=document.getElementById('collapseRiskPct');
+  bar.style.background=collapsePct<35?'var(--green)':collapsePct<65?'var(--yellow)':'var(--red)';
+  pctEl.style.color=collapsePct<35?'var(--green)':collapsePct<65?'var(--yellow)':'var(--red)';
+  setTimeout(()=>{bar.style.width=collapsePct+'%';},200);
+  pctEl.textContent=collapsePct+'%';
 
-  // snapshot
-  document.getElementById('snapScore').textContent = fragility;
-  document.getElementById('snapVerdict').textContent = text.textContent;
-  document.getElementById('snapVerdict').style.color = color;
-  document.getElementById('snapBe').textContent = '$' + ev.toFixed(2);
-  document.getElementById('snapProfit').textContent = (profit >= 0 ? '+$' : '-$') + Math.abs(profit).toFixed(3);
-  document.getElementById('snapHeadroom').textContent = Math.max(0, headroom).toFixed(0) + '%';
+  document.getElementById('snapScore').textContent=fragility;
+  document.getElementById('snapVerdict').textContent=text.textContent;
+  document.getElementById('snapVerdict').style.color=hexColor;
+  document.getElementById('snapBe').textContent='$'+ev.toFixed(2);
+  document.getElementById('snapProfit').textContent=(profit>=0?'+$':'-$')+Math.abs(profit).toFixed(3);
+  document.getElementById('snapHeadroom').textContent=Math.max(0,headroom).toFixed(0)+'%';
 }
 
+// FAQ
+document.querySelectorAll('.faq-question').forEach(q=>{
+  q.addEventListener('click',()=>{
+    const item=q.parentElement;
+    const isOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+    if(!isOpen) item.classList.add('open');
+  });
+});
+
 // DOWNLOAD
-document.getElementById('downloadBtn').addEventListener('click', () => {
-  const el = document.getElementById('snapshotEl');
-  html2canvas(el, {backgroundColor:'#0d1220',scale:2}).then(canvas => {
-    const a = document.createElement('a');
-    a.download = 'axovera-score.png';
-    a.href = canvas.toDataURL();
+document.getElementById('downloadBtn').addEventListener('click',()=>{
+  const el=document.getElementById('snapshotEl');
+  html2canvas(el,{backgroundColor:'#0d1220',scale:2}).then(canvas=>{
+    const a=document.createElement('a');
+    a.download='axovera-score.png';
+    a.href=canvas.toDataURL();
     a.click();
   });
 });
 
 // SHARE
-function getShareText() {
-  const score = document.getElementById('scoreNumber').textContent;
-  const verdict = document.getElementById('verdictText').textContent;
-  return `My ad system scored ${score}/100 on @Axovera's Collapse Risk Scanner — verdict: ${verdict}. Check yours free → axovera.com`;
+function getShareText(){
+  const score=document.getElementById('scoreNumber').textContent;
+  const verdict=document.getElementById('verdictText').textContent;
+  return`My ad system scored ${score}/100 on @Axovera's Collapse Risk Scanner — verdict: ${verdict}. Check yours free → axovera.com`;
 }
-function shareTwitter() { window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(getShareText()),'_blank'); }
-function shareTelegram() { window.open('https://t.me/share/url?url=https://axovera.com&text='+encodeURIComponent(getShareText()),'_blank'); }
+function shareTwitter(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(getShareText()),'_blank');}
+function shareTelegram(){window.open('https://t.me/share/url?url=https://axovera.com&text='+encodeURIComponent(getShareText()),'_blank');}
 </script>
 </body>
 </html>
