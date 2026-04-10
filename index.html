@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Axovera — Ad Collapse Risk Scanner</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#04050a;
+  --surface:#080c14;
+  --card:#0d1220;
+  --border:#151e30;
+  --border2:#1a2540;
+  --text:#dde3f0;
+  --muted:#4a5568;
+  --muted2:#6b7fa0;
+  --green:#00e5a0;
+  --green-bg:rgba(0,229,160,0.07);
+  --yellow:#ffb938;
+  --yellow-bg:rgba(255,185,56,0.07);
+  --red:#ff4560;
+  --red-bg:rgba(255,69,96,0.07);
+  --accent:#5b6ef5;
+}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* NOISE TEXTURE */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
+  opacity:.4;
+}
+
+/* GRID LINES */
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(91,110,245,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(91,110,245,0.03) 1px,transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;
+  z-index:0;
+}
+
+.page{position:relative;z-index:1}
+
+/* HEADER */
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:20px 40px;
+  border-bottom:1px solid var(--border);
+}
+
+.brand{
+  font-family:'Syne',sans-serif;
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:3px;
+  color:#fff;
+}
+
+.brand-tag{
+  display:inline-block;
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:1.5px;
+  background:var(--green-bg);
+  color:var(--green);
+  border:1px solid rgba(0,229,160,0.2);
+  padding:2px 8px;
+  border-radius:4px;
+  margin-left:10px;
+  vertical-align:middle;
+  font-family:'DM Sans',sans-serif;
+}
+
+.header-cta{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:9px 20px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  letter-spacing:.3px;
+  transition:all .2s;
+}
+.header-cta:hover{background:#4a5ce0;transform:translateY(-1px)}
+
+/* HERO */
+.hero{
+  text-align:center;
+  padding:64px 40px 40px;
+  max-width:720px;
+  margin:0 auto;
+}
+
+.hero-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:2px;
+  color:var(--muted2);
+  text-transform:uppercase;
+  margin-bottom:20px;
+  border:1px solid var(--border2);
+  padding:5px 14px;
+  border-radius:20px;
+}
+
+.hero-eyebrow-dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--red);
+  animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.5;transform:scale(1.3)}
+}
+
+.hero-title{
+  font-family:'Syne',sans-serif;
+  font-size:52px;
+  font-weight:800;
+  line-height:1.05;
+  color:#fff;
+  margin-bottom:18px;
+  letter-spacing:-1px;
+}
+
+.hero-title em{
+  font-style:normal;
+  color:var(--red);
+}
+
+.hero-sub{
+  font-size:17px;
+  color:var(--muted2);
+  line-height:1.7;
+  max-width:520px;
+  margin:0 auto 14px;
+}
+
+.hero-proof{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:8px;
+}
+
+/* MAIN CARD */
+.main-card{
+  max-width:780px;
+  margin:0 auto 40px;
+  padding:0 24px;
+}
+
+.scanner-box{
+  background:var(--card);
+  border:1px solid var(--border2);
+  border-radius:20px;
+  overflow:hidden;
+}
+
+/* INPUT SECTION */
+.input-section{
+  padding:32px 36px;
+  border-bottom:1px solid var(--border);
+}
+
+.input-label-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:24px;
+}
+
+.input-section-title{
+  font-family:'Syne',sans-serif;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  color:var(--muted2);
+  text-transform:uppercase;
+}
+
+.step-tag{
+  font-size:11px;
+  color:var(--muted);
+  background:var(--border);
+  padding:3px 10px;
+  border-radius:4px;
+}
+
+.inputs-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-bottom:20px;
+}
+
+.field{
+  position:relative;
+}
+
+.field label{
+  display:block;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:1px;
+  color:var(--muted2);
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+
+.field-hint{
+  display:block;
+  font-size:10px;
+  color:var(--muted);
+  margin-bottom:7px;
+  font-style:italic;
+}
+
+.field input{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  color:#fff;
+  padding:13px 16px;
+  border-radius:10px;
+  font-size:16px;
+  font-family:'DM Sans',sans-serif;
+  transition:all .2s;
+  font-weight:500;
+}
+
+.field input:focus{
+  outline:none;
+  border-color:var(--accent);
+  background:#0a0f1e;
+  box-shadow:0 0 0 3px rgba(91,110,245,0.1);
+}
+
+.field input::placeholder{color:var(--muted)}
+
+.field-prefix{
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  font-size:12px;
+  color:var(--muted);
+  pointer-events:none;
+}
+
+.scan-btn{
+  width:100%;
+  background:linear-gradient(135deg,#5b6ef5,#7c3aed);
+  color:#fff;
+  border:none;
+  padding:16px;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:'Syne',sans-serif;
+  letter-spacing:.5px;
+  transition:all .25s;
+  position:relative;
+  overflow:hidden;
+}
+
+.scan-btn::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);
+  opacity:0;
+  transition:opacity .2s;
+}
+
+.scan-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(91,110,245,0.35)}
+.scan-btn:hover::after{opacity:1}
+.scan-btn:active{transform:translateY(0)}
+
+/* RESULT SECTION */
+.result-section{
+  padding:36px;
+  display:none;
+}
+
+.result-section.visible{display:block}
+
+/* SCORE DISPLAY */
+.score-center{
+  text-align:center;
+  margin-bottom:36px;
+}
+
+.score-ring-wrap{
+  position:relative;
+  display:inline-block;
+  margin-bottom:16px;
+}
+
+.score-ring{
+  transform:rotate(-90deg);
+  display:block;
+}
+
+.score-ring-bg{
+  fill:none;
+  stroke:var(--border2);
+  stroke-width:8;
+}
+
+.score-ring-fill{
+  fill:none;
+  stroke-width:8;
+  stroke-linecap:round;
+  transition:stroke-dashoffset 1.2s cubic-bezier(0.22,1,0.36,1), stroke .5s;
+  stroke-dasharray:440;
+  stroke-dashoffset:440;
+}
+
+.score-inner{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.score-number{
+  font-family:'Syne',sans-serif;
+  font-size:52px;
+  font-weight:800;
+  line-height:1;
+  color:#fff;
+}
+
+.score-label{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:1.5px;
+  color:var(--muted2);
+  text-transform:uppercase;
+  margin-top:4px;
+}
+
+.verdict-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 20px;
+  border-radius:30px;
+  font-family:'Syne',sans-serif;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.verdict-safe{background:var(--green-bg);color:var(--green);border:1px solid rgba(0,229,160,0.25)}
+.verdict-warning{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(255,185,56,0.25)}
+.verdict-danger{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,69,96,0.25)}
+
+.verdict-dot{width:8px;height:8px;border-radius:50%}
+.verdict-safe .verdict-dot{background:var(--green)}
+.verdict-warning .verdict-dot{background:var(--yellow);animation:pulse 1.5s infinite}
+.verdict-danger .verdict-dot{background:var(--red);animation:pulse 1s infinite}
+
+.insight-line{
+  font-size:16px;
+  color:var(--muted2);
+  line-height:1.6;
+  max-width:480px;
+  margin:0 auto;
+}
+
+.insight-line strong{color:#fff;font-weight:600}
+
+/* METRICS STRIP */
+.metrics-strip{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:28px;
+}
+
+.metric-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  text-align:center;
+}
+
+.metric-box-label{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:1px;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+
+.metric-box-value{
+  font-family:'Syne',sans-serif;
+  font-size:22px;
+  font-weight:700;
+  color:#fff;
+}
+
+.metric-box-value.green{color:var(--green)}
+.metric-box-value.yellow{color:var(--yellow)}
+.metric-box-value.red{color:var(--red)}
+
+/* COLLAPSE BAR */
+.collapse-section{
+  margin-bottom:28px;
+}
+
+.collapse-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.collapse-title{
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.8px;
+  color:var(--muted2);
+  text-transform:uppercase;
+}
+
+.collapse-pct{
+  font-family:'Syne',sans-serif;
+  font-size:20px;
+  font-weight:700;
+}
+
+.bar-track{
+  height:8px;
+  background:var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  margin-bottom:6px;
+}
+
+.bar-fill{
+  height:100%;
+  width:0%;
+  border-radius:4px;
+  transition:width 1s cubic-bezier(0.22,1,0.36,1);
+}
+
+.bar-labels{
+  display:flex;
+  justify-content:space-between;
+  font-size:10px;
+  color:var(--muted);
+}
+
+/* SIMULATION */
+.simulation-section{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:14px;
+  padding:22px;
+  margin-bottom:24px;
+}
+
+.sim-title{
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.8px;
+  color:var(--muted2);
+  text-transform:uppercase;
+  margin-bottom:18px;
+}
+
+.sliders-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  margin-bottom:20px;
+}
+
+.slider-field label{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12px;
+  color:var(--muted2);
+  margin-bottom:8px;
+}
+
+.slider-field label span{
+  font-family:'Syne',sans-serif;
+  font-size:14px;
+  font-weight:700;
+  color:#fff;
+}
+
+input[type=range]{
+  -webkit-appearance:none;
+  width:100%;
+  height:4px;
+  border-radius:2px;
+  background:var(--border2);
+  outline:none;
+}
+
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:16px;height:16px;
+  border-radius:50%;
+  background:var(--accent);
+  cursor:pointer;
+  box-shadow:0 0 8px rgba(91,110,245,0.5);
+}
+
+.sim-result{
+  text-align:center;
+  padding:16px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--card);
+}
+
+.sim-result-label{font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:.5px}
+.sim-result-value{
+  font-family:'Syne',sans-serif;
+  font-size:28px;
+  font-weight:800;
+}
+
+/* PRO GATE */
+.pro-gate{
+  border:1px solid var(--border2);
+  border-radius:14px;
+  padding:28px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+  margin-bottom:20px;
+}
+
+.pro-gate::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(91,110,245,0.06),rgba(124,58,237,0.06));
+  pointer-events:none;
+}
+
+.pro-gate-label{
+  display:inline-block;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:1.5px;
+  background:rgba(91,110,245,0.15);
+  color:#a5b4fc;
+  border:1px solid rgba(91,110,245,0.3);
+  padding:3px 10px;
+  border-radius:4px;
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+.pro-gate-title{
+  font-family:'Syne',sans-serif;
+  font-size:20px;
+  font-weight:800;
+  color:#fff;
+  margin-bottom:8px;
+}
+
+.pro-gate-desc{
+  font-size:13px;
+  color:var(--muted2);
+  margin-bottom:20px;
+  line-height:1.6;
+}
+
+.pro-features{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:22px;
+  text-align:left;
+}
+
+.pro-feature{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  color:var(--muted2);
+  padding:8px 12px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid var(--border);
+  border-radius:8px;
+}
+
+.pro-feature-dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--accent);
+  flex-shrink:0;
+}
+
+.pro-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:linear-gradient(135deg,#5b6ef5,#7c3aed);
+  color:#fff;
+  border:none;
+  padding:13px 32px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:'Syne',sans-serif;
+  letter-spacing:.5px;
+  transition:all .2s;
+}
+
+.pro-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(91,110,245,0.4)}
+
+.pro-price{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:10px;
+}
+
+/* SHARE / DOWNLOAD */
+.actions-row{
+  display:flex;
+  gap:10px;
+}
+
+.action-btn{
+  flex:1;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  color:var(--muted2);
+  padding:12px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:all .2s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.action-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.8);
+  z-index:1000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+.modal-overlay.open{display:flex}
+.modal-box{
+  background:#0d1220;
+  border:1px solid var(--border2);
+  border-radius:16px;
+  padding:36px;
+  width:440px;
+  max-width:90vw;
+  text-align:center;
+}
+.modal-icon{
+  font-size:32px;
+  margin-bottom:16px;
+  display:block;
+}
+.modal-title{
+  font-family:'Syne',sans-serif;
+  font-size:20px;
+  font-weight:800;
+  color:#fff;
+  margin-bottom:10px;
+}
+.modal-body{font-size:14px;color:var(--muted2);line-height:1.7;margin-bottom:24px}
+.modal-btn{
+  background:var(--accent);
+  border:none;color:#fff;
+  padding:12px 28px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:'Syne',sans-serif;
+}
+
+/* SNAPSHOT (hidden, for download) */
+.snapshot-hidden{
+  position:fixed;
+  top:-9999px;
+  left:-9999px;
+  width:480px;
+  background:#0d1220;
+  padding:32px;
+  border-radius:16px;
+  border:1px solid var(--border2);
+  font-family:'DM Sans',sans-serif;
+}
+
+/* FOOTER */
+.footer{
+  text-align:center;
+  padding:32px;
+  font-size:12px;
+  color:var(--muted);
+  border-top:1px solid var(--border);
+}
+
+.footer a{color:var(--muted2);text-decoration:none}
+
+/* MOBILE */
+@media(max-width:640px){
+  .header{padding:16px 20px}
+  .hero{padding:40px 20px 28px}
+  .hero-title{font-size:36px}
+  .main-card{padding:0 16px}
+  .input-section{padding:24px 20px}
+  .inputs-grid{grid-template-columns:1fr}
+  .result-section{padding:24px 20px}
+  .metrics-strip{grid-template-columns:1fr 1fr}
+  .sliders-grid{grid-template-columns:1fr}
+  .pro-features{grid-template-columns:1fr}
+  .score-number{font-size:40px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="brand">
+    AXOVERA
+    <span class="brand-tag">FREE</span>
+  </div>
+  <button class="header-cta" onclick="document.getElementById('proModal').classList.add('open')">
+    Unlock Pro — $19
+  </button>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">
+    <span class="hero-eyebrow-dot"></span>
+    Ad Collapse Risk Scanner
+  </div>
+  <h1 class="hero-title">
+    Is your ad system<br>about to <em>collapse?</em>
+  </h1>
+  <p class="hero-sub">
+    Enter 4 numbers. Get your Structural Fragility Score — and find out how close you are to losing money on every click.
+  </p>
+  <p class="hero-proof">Used by 1,000+ media buyers and ecom store owners</p>
+</div>
+
+<!-- MAIN CARD -->
+<div class="main-card">
+<div class="scanner-box">
+
+  <!-- INPUTS -->
+  <div class="input-section">
+    <div class="input-label-row">
+      <div class="input-section-title">Your Numbers</div>
+      <div class="step-tag">Step 1 of 1</div>
+    </div>
+
+    <div class="inputs-grid">
+      <div class="field">
+        <label>AOV — Average Order Value</label>
+        <span class="field-hint">What's your average sale amount?</span>
+        <input type="number" id="aov" placeholder="120" min="0">
+        <span class="field-prefix">$</span>
+      </div>
+      <div class="field">
+        <label>CVR — Conversion Rate</label>
+        <span class="field-hint">% of clicks that become sales</span>
+        <input type="number" id="cvr" placeholder="3.5" min="0" max="100" step="0.1">
+        <span class="field-prefix">%</span>
+      </div>
+      <div class="field">
+        <label>COGS — Cost of Goods Sold</label>
+        <span class="field-hint">What does one sale cost you to fulfill?</span>
+        <input type="number" id="cogs" placeholder="40" min="0">
+        <span class="field-prefix">$</span>
+      </div>
+      <div class="field">
+        <label>CPC — Cost Per Click</label>
+        <span class="field-hint">What you're paying per ad click</span>
+        <input type="number" id="cpc" placeholder="1.80" min="0" step="0.01">
+        <span class="field-prefix">$</span>
+      </div>
+    </div>
+
+    <button class="scan-btn" id="scanBtn">
+      Run Collapse Scan →
+    </button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="result-section" id="resultSection">
+
+    <!-- SCORE RING -->
+    <div class="score-center" id="scoreCard">
+      <div class="score-ring-wrap">
+        <svg class="score-ring" width="170" height="170" viewBox="0 0 170 170">
+          <circle class="score-ring-bg" cx="85" cy="85" r="70"/>
+          <circle class="score-ring-fill" id="ringFill" cx="85" cy="85" r="70"/>
+        </svg>
+        <div class="score-inner">
+          <div class="score-number" id="scoreNumber">0</div>
+          <div class="score-label">Fragility</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="verdict-badge" id="verdictBadge">
+          <span class="verdict-dot"></span>
+          <span id="verdictText">—</span>
+        </div>
+      </div>
+      <div class="insight-line" id="insightLine"></div>
+    </div>
+
+    <!-- METRICS -->
+    <div class="metrics-strip">
+      <div class="metric-box">
+        <div class="metric-box-label">Break-Even CPC</div>
+        <div class="metric-box-value" id="beValue">—</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-box-label">Profit / Click</div>
+        <div class="metric-box-value" id="profitValue">—</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-box-label">CPC Headroom</div>
+        <div class="metric-box-value" id="headroomValue">—</div>
+      </div>
+    </div>
+
+    <!-- COLLAPSE RISK BAR -->
+    <div class="collapse-section">
+      <div class="collapse-header">
+        <span class="collapse-title">Collapse Risk from Volatility</span>
+        <span class="collapse-pct" id="collapseRiskPct">—</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" id="collapseBar"></div>
+      </div>
+      <div class="bar-labels">
+        <span>Safe</span>
+        <span>Moderate</span>
+        <span>Extreme</span>
+      </div>
+    </div>
+
+    <!-- VOLATILITY SIMULATION -->
+    <div class="simulation-section">
+      <div class="sim-title">Live Volatility Shock</div>
+      <div class="sliders-grid">
+        <div class="slider-field">
+          <label>CPC Increase <span id="cpcShockLabel">+20%</span></label>
+          <input type="range" id="cpcShockSlider" min="0" max="50" value="20" step="1">
+        </div>
+        <div class="slider-field">
+          <label>CVR Drop <span id="cvrShockLabel">−20%</span></label>
+          <input type="range" id="cvrShockSlider" min="0" max="50" value="20" step="1">
+        </div>
+      </div>
+      <div class="sim-result">
+        <div class="sim-result-label">WORST-CASE PROFIT PER CLICK</div>
+        <div class="sim-result-value" id="simResult">—</div>
+      </div>
+    </div>
+
+    <!-- PRO GATE -->
+    <div class="pro-gate">
+      <div class="pro-gate-label">Pro Analysis</div>
+      <div class="pro-gate-title">See exactly why — and how to fix it</div>
+      <div class="pro-gate-desc">
+        Your score shows the risk. Pro tells you which variable breaks your system first, simulates 9 stress scenarios, and gives you a step-by-step action plan.
+      </div>
+      <div class="pro-features">
+        <div class="pro-feature"><span class="pro-feature-dot"></span>Scenario Matrix (9 scenarios)</div>
+        <div class="pro-feature"><span class="pro-feature-dot"></span>Sensitivity Map</div>
+        <div class="pro-feature"><span class="pro-feature-dot"></span>Risk Surface Heatmap</div>
+        <div class="pro-feature"><span class="pro-feature-dot"></span>Scale Ceiling Engine</div>
+        <div class="pro-feature"><span class="pro-feature-dot"></span>Structural Diagnosis</div>
+        <div class="pro-feature"><span class="pro-feature-dot"></span>Action Plan</div>
+      </div>
+      <button class="pro-btn" onclick="document.getElementById('proModal').classList.add('open')">
+        Unlock Pro — $19 one-time
+      </button>
+      <div class="pro-price">One-time payment. No subscription. No BS.</div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions-row">
+      <button class="action-btn" id="downloadBtn">
+        ↓ Download Score Card
+      </button>
+      <button class="action-btn" onclick="shareTwitter()">
+        ↗ Share on Twitter
+      </button>
+      <button class="action-btn" onclick="shareTelegram()">
+        ↗ Share on Telegram
+      </button>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>Axovera — Structural Risk Engine for Paid Traffic &nbsp;·&nbsp; <a href="#">Pro Version</a> &nbsp;·&nbsp; <a href="#">Docs</a></p>
+  <p style="margin-top:6px;font-size:11px">Not financial advice. Use as a strategic diagnostic tool.</p>
+</div>
+
+</div><!-- end .page -->
+
+<!-- HIDDEN SNAPSHOT -->
+<div class="snapshot-hidden" id="snapshotEl">
+  <div style="font-family:'DM Sans',sans-serif;color:#dde3f0">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:2px;color:#fff">AXOVERA</div>
+      <div style="font-size:10px;color:#4a5568;letter-spacing:1px">AD COLLAPSE SCANNER</div>
+    </div>
+    <div style="text-align:center;padding:20px 0;border-top:1px solid #151e30;border-bottom:1px solid #151e30;margin-bottom:20px">
+      <div style="font-size:64px;font-weight:800;font-family:'Syne',sans-serif;color:#fff;line-height:1" id="snapScore">—</div>
+      <div style="font-size:11px;letter-spacing:1.5px;color:#4a5568;margin-top:4px">FRAGILITY SCORE</div>
+      <div style="margin-top:12px;font-size:16px;font-weight:600" id="snapVerdict">—</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+      <div style="text-align:center;padding:12px;background:#080c14;border-radius:8px">
+        <div style="font-size:10px;color:#4a5568;margin-bottom:4px">BREAK-EVEN CPC</div>
+        <div style="font-size:18px;font-weight:700;color:#fff" id="snapBe">—</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:#080c14;border-radius:8px">
+        <div style="font-size:10px;color:#4a5568;margin-bottom:4px">PROFIT/CLICK</div>
+        <div style="font-size:18px;font-weight:700;color:#fff" id="snapProfit">—</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:#080c14;border-radius:8px">
+        <div style="font-size:10px;color:#4a5568;margin-bottom:4px">HEADROOM</div>
+        <div style="font-size:18px;font-weight:700;color:#fff" id="snapHeadroom">—</div>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:11px;color:#4a5568;margin-top:16px">axovera.com — Structural Risk Engine for Paid Traffic</div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="ecoModal">
+  <div class="modal-box">
+    <span class="modal-icon">⚠️</span>
+    <div class="modal-title">Structural Violation</div>
+    <div class="modal-body">Your COGS is equal to or higher than your AOV. This means your unit economics are negative before a single ad runs. No ad strategy can fix this — fix the product margin first.</div>
+    <button class="modal-btn" onclick="document.getElementById('ecoModal').classList.remove('open')">Got it</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="proModal">
+  <div class="modal-box">
+    <span class="modal-icon">🔬</span>
+    <div class="modal-title">Axovera Pro</div>
+    <div class="modal-body">
+      Get the full structural risk suite — Scenario Matrix, Sensitivity Map, Risk Surface Heatmap, Scale Ceiling Engine, Structural Diagnosis and Action Plan.<br><br>
+      <strong style="color:#fff">$19 one-time. No subscription.</strong>
+    </div>
+    <button class="modal-btn" onclick="document.getElementById('proModal').classList.remove('open')">Coming Soon — Notify Me</button>
+    <div style="margin-top:12px;font-size:12px;color:var(--muted)">Closes automatically when live</div>
+  </div>
+</div>
+
+<script>
+let baseData = null;
+
+const scanBtn = document.getElementById('scanBtn');
+const resultSection = document.getElementById('resultSection');
+
+// INPUTS reset results on change
+['aov','cvr','cogs','cpc'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    baseData = null;
+    resultSection.classList.remove('visible');
+  });
+});
+
+// SLIDERS
+const cpcSlider = document.getElementById('cpcShockSlider');
+const cvrSlider = document.getElementById('cvrShockSlider');
+cpcSlider.addEventListener('input', () => {
+  document.getElementById('cpcShockLabel').textContent = '+' + cpcSlider.value + '%';
+  updateSim();
+});
+cvrSlider.addEventListener('input', () => {
+  document.getElementById('cvrShockLabel').textContent = '−' + cvrSlider.value + '%';
+  updateSim();
+});
+
+function updateSim() {
+  if (!baseData) return;
+  const {net, cvr, cpc} = baseData;
+  const cpcShock = parseFloat(cpcSlider.value) / 100;
+  const cvrShock = parseFloat(cvrSlider.value) / 100;
+  const adjCpc = cpc * (1 + cpcShock);
+  const adjCvr = cvr * (1 - cvrShock);
+  const worstProfit = net * (adjCvr / 100) - adjCpc;
+  const el = document.getElementById('simResult');
+  el.textContent = (worstProfit >= 0 ? '+$' : '-$') + Math.abs(worstProfit).toFixed(3);
+  el.style.color = worstProfit > 0 ? 'var(--green)' : worstProfit > -0.1 ? 'var(--yellow)' : 'var(--red)';
+}
+
+// MAIN SCAN
+scanBtn.addEventListener('click', () => {
+  const aov = parseFloat(document.getElementById('aov').value);
+  const cvr = parseFloat(document.getElementById('cvr').value);
+  const cogs = parseFloat(document.getElementById('cogs').value);
+  const cpc = parseFloat(document.getElementById('cpc').value);
+
+  if (isNaN(aov)||isNaN(cvr)||isNaN(cogs)||isNaN(cpc)) {
+    alert('Please fill in all 4 fields.');
+    return;
+  }
+  if (cogs >= aov) {
+    document.getElementById('ecoModal').classList.add('open');
+    return;
+  }
+
+  const net = aov - cogs;
+  const ev = net * (cvr / 100);
+  const profit = ev - cpc;
+  const headroom = ((ev - cpc) / cpc) * 100;
+
+  // collapse probability (9 scenarios)
+  let losses = 0;
+  [-10,-20,-30].forEach(cs => {
+    [10,20,30].forEach(ps => {
+      const p = net*(cvr*(1+cs/100)/100) - cpc*(1+ps/100);
+      if(p <= 0) losses++;
+    });
+  });
+  const collapsePct = Math.round((losses/9)*100);
+
+  // fragility score
+  let fragility = 0;
+  if (ev > 0) {
+    fragility = 100 - ((profit / ev) * 100);
+    fragility = Math.max(0, Math.min(100, fragility));
+  } else {
+    fragility = 100;
+  }
+
+  baseData = {net, cvr, cpc, ev, profit};
+
+  // render
+  renderScore(Math.round(fragility), profit, ev, headroom, collapsePct);
+  resultSection.classList.add('visible');
+  resultSection.scrollIntoView({behavior:'smooth', block:'start'});
+  updateSim();
+});
+
+function renderScore(fragility, profit, ev, headroom, collapsePct) {
+  // ring
+  const circumference = 440;
+  const offset = circumference - (fragility / 100) * circumference;
+  const ring = document.getElementById('ringFill');
+  const color = fragility < 35 ? '#00e5a0' : fragility < 65 ? '#ffb938' : '#ff4560';
+  ring.style.stroke = color;
+  setTimeout(() => { ring.style.strokeDashoffset = offset; }, 100);
+
+  // score number animation
+  const numEl = document.getElementById('scoreNumber');
+  numEl.style.color = color;
+  let current = 0;
+  const interval = setInterval(() => {
+    current = Math.min(current + Math.ceil(fragility / 25), fragility);
+    numEl.textContent = current;
+    if (current >= fragility) clearInterval(interval);
+  }, 40);
+
+  // verdict
+  const badge = document.getElementById('verdictBadge');
+  const text = document.getElementById('verdictText');
+  badge.className = 'verdict-badge';
+  if (fragility < 35) {
+    badge.classList.add('verdict-safe');
+    text.textContent = 'SYSTEM SAFE';
+  } else if (fragility < 65) {
+    badge.classList.add('verdict-warning');
+    text.textContent = 'SYSTEM WARNING';
+  } else {
+    badge.classList.add('verdict-danger');
+    text.textContent = 'COLLAPSE RISK';
+  }
+
+  // insight line
+  const insight = document.getElementById('insightLine');
+  if (profit > 0) {
+    insight.innerHTML = `Your system earns <strong>$${profit.toFixed(3)}</strong> per click. CPC can rise <strong>${Math.max(0,headroom).toFixed(0)}%</strong> before you hit break-even.`;
+  } else {
+    insight.innerHTML = `Your system is <strong>losing $${Math.abs(profit).toFixed(3)}</strong> per click. You need CPC to drop to <strong>$${ev.toFixed(2)}</strong> or lower.`;
+  }
+
+  // metrics
+  document.getElementById('beValue').textContent = '$' + ev.toFixed(2);
+  document.getElementById('beValue').className = 'metric-box-value';
+  
+  const pEl = document.getElementById('profitValue');
+  pEl.textContent = (profit >= 0 ? '+$' : '-$') + Math.abs(profit).toFixed(3);
+  pEl.className = 'metric-box-value ' + (profit > 0.1 ? 'green' : profit > 0 ? 'yellow' : 'red');
+
+  const hEl = document.getElementById('headroomValue');
+  hEl.textContent = Math.max(0, headroom).toFixed(0) + '%';
+  hEl.className = 'metric-box-value ' + (headroom > 30 ? 'green' : headroom > 10 ? 'yellow' : 'red');
+
+  // collapse bar
+  const bar = document.getElementById('collapseBar');
+  const pctEl = document.getElementById('collapseRiskPct');
+  bar.style.background = collapsePct < 35 ? 'var(--green)' : collapsePct < 65 ? 'var(--yellow)' : 'var(--red)';
+  pctEl.style.color = collapsePct < 35 ? 'var(--green)' : collapsePct < 65 ? 'var(--yellow)' : 'var(--red)';
+  setTimeout(() => { bar.style.width = collapsePct + '%'; }, 200);
+  pctEl.textContent = collapsePct + '%';
+
+  // snapshot
+  document.getElementById('snapScore').textContent = fragility;
+  document.getElementById('snapVerdict').textContent = text.textContent;
+  document.getElementById('snapVerdict').style.color = color;
+  document.getElementById('snapBe').textContent = '$' + ev.toFixed(2);
+  document.getElementById('snapProfit').textContent = (profit >= 0 ? '+$' : '-$') + Math.abs(profit).toFixed(3);
+  document.getElementById('snapHeadroom').textContent = Math.max(0, headroom).toFixed(0) + '%';
+}
+
+// DOWNLOAD
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  const el = document.getElementById('snapshotEl');
+  html2canvas(el, {backgroundColor:'#0d1220',scale:2}).then(canvas => {
+    const a = document.createElement('a');
+    a.download = 'axovera-score.png';
+    a.href = canvas.toDataURL();
+    a.click();
+  });
+});
+
+// SHARE
+function getShareText() {
+  const score = document.getElementById('scoreNumber').textContent;
+  const verdict = document.getElementById('verdictText').textContent;
+  return `My ad system scored ${score}/100 on @Axovera's Collapse Risk Scanner — verdict: ${verdict}. Check yours free → axovera.com`;
+}
+function shareTwitter() { window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(getShareText()),'_blank'); }
+function shareTelegram() { window.open('https://t.me/share/url?url=https://axovera.com&text='+encodeURIComponent(getShareText()),'_blank'); }
+</script>
+</body>
+</html>
