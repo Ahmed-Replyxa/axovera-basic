@@ -761,10 +761,12 @@ input[type=range]::-webkit-slider-thumb{
 }
 .splash-logo{
   font-family:'Syne',sans-serif;
-  font-size:48px;font-weight:800;
-  letter-spacing:8px;color:#fff;
+  font-size:clamp(24px,8vw,48px);font-weight:800;
+  letter-spacing:clamp(3px,2vw,8px);color:#fff;
   animation:splashIn 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
   opacity:0;
+  padding:0 24px;
+  text-align:center;
 }
 .splash-line{
   width:0px;height:2px;
@@ -791,6 +793,201 @@ input[type=range]::-webkit-slider-thumb{
   from{opacity:1;pointer-events:all}
   to{opacity:0;pointer-events:none}
 }
+
+/* LANDING PAGE */
+.landing{width:100%}
+
+.lp-hero{
+  min-height:90vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:80px 24px;
+  text-align:center;
+  position:relative;
+}
+
+.lp-hero::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 50%, rgba(91,110,245,0.08) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+.lp-hero-inner{max-width:800px;margin:0 auto;position:relative;z-index:1}
+
+.lp-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:600;letter-spacing:2px;
+  color:var(--muted2);text-transform:uppercase;
+  border:1px solid var(--border2);padding:5px 14px;
+  border-radius:20px;background:var(--surface);
+  margin-bottom:28px;
+}
+
+.lp-eyebrow-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--red);animation:pulse 2s infinite;
+}
+
+.lp-title{
+  font-family:'Syne',sans-serif;
+  font-size:44px;font-weight:800;line-height:1.1;
+  color:var(--text);margin-bottom:24px;letter-spacing:-1px;
+  max-width:700px;margin-left:auto;margin-right:auto;
+}
+
+.lp-title em{font-style:normal;color:var(--red)}
+
+.lp-sub{
+  font-size:18px;color:var(--muted2);line-height:1.8;
+  max-width:620px;margin:0 auto 36px;
+}
+
+.lp-cta-row{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+
+.lp-cta-btn{
+  display:inline-block;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;text-decoration:none;
+  padding:15px 32px;border-radius:10px;
+  font-family:'Syne',sans-serif;font-size:15px;font-weight:700;
+  letter-spacing:.5px;transition:all .2s;
+}
+.lp-cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(91,110,245,0.3)}
+
+.lp-cta-note{font-size:13px;color:var(--muted);font-weight:500}
+
+/* SECTIONS */
+.lp-section{padding:80px 24px}
+.lp-section-dark{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.lp-section-inner{max-width:960px;margin:0 auto}
+
+.lp-section-label{
+  font-size:11px;font-weight:700;letter-spacing:2px;
+  color:var(--accent);text-transform:uppercase;margin-bottom:12px;
+}
+
+.lp-section-title{
+  font-family:'Syne',sans-serif;font-size:30px;font-weight:800;
+  color:var(--text);margin-bottom:16px;line-height:1.2;letter-spacing:-.3px;
+}
+
+.lp-section-sub{font-size:16px;color:var(--muted2);line-height:1.8;max-width:600px;margin-bottom:40px}
+
+/* METRICS GRID */
+.lp-metrics-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;
+}
+
+.lp-metric-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:20px;text-align:center;
+}
+
+.lp-metric-name{
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:700;
+  color:var(--text);margin-bottom:6px;
+}
+
+.lp-metric-desc{font-size:11px;color:var(--muted2);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+
+.lp-callout{
+  background:var(--red-bg);border:1px solid rgba(255,69,96,0.2);
+  border-radius:10px;padding:20px 24px;
+  font-size:15px;color:var(--muted2);line-height:1.7;
+}
+.lp-callout strong{color:var(--red)}
+
+/* THREE GRID */
+.lp-three-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+
+.lp-three-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:24px;
+}
+
+.lp-three-num{
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+  color:var(--accent);letter-spacing:1px;margin-bottom:10px;
+}
+
+.lp-three-name{
+  font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
+  color:var(--text);margin-bottom:8px;
+}
+
+.lp-three-desc{font-size:13px;color:var(--muted2);line-height:1.6}
+
+.lp-collapse-note{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:10px;padding:20px 24px;
+  font-size:15px;color:var(--muted2);line-height:1.7;text-align:center;
+}
+.lp-collapse-note strong{color:var(--text)}
+
+/* SIGNALS GRID */
+.lp-signals-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+.lp-signal-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:24px;
+  transition:border-color .2s;
+}
+.lp-signal-item:hover{border-color:var(--accent)}
+
+.lp-signal-icon{font-size:24px;margin-bottom:12px}
+
+.lp-signal-name{
+  font-family:'Syne',sans-serif;font-size:15px;font-weight:700;
+  color:var(--text);margin-bottom:8px;
+}
+
+.lp-signal-desc{font-size:13px;color:var(--muted2);line-height:1.6}
+
+/* FOR SECTION */
+.lp-for-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+
+.lp-for-list{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+
+.lp-for-item{
+  display:flex;align-items:center;gap:10px;
+  font-size:15px;color:var(--text2);font-weight:500;
+}
+
+.lp-for-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent);flex-shrink:0;
+}
+
+.lp-for-cta-box{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:16px;padding:32px;text-align:center;
+}
+
+.lp-for-cta-label{
+  display:inline-block;font-size:10px;font-weight:700;letter-spacing:1.5px;
+  background:var(--green-bg);color:var(--green);
+  border:1px solid rgba(0,229,160,0.3);
+  padding:3px 10px;border-radius:4px;text-transform:uppercase;margin-bottom:14px;
+}
+
+.lp-for-cta-title{
+  font-family:'Syne',sans-serif;font-size:20px;font-weight:800;
+  color:var(--text);margin-bottom:8px;
+}
+
+.lp-for-cta-desc{font-size:14px;color:var(--muted2);line-height:1.6}
+.lp-for-cta-note{font-size:12px;color:var(--muted);margin-top:10px;font-weight:500}
+
+/* MOBILE */
+@media(max-width:768px){
+  .lp-title{font-size:36px}
+  .lp-metrics-grid{grid-template-columns:1fr 1fr}
+  .lp-three-grid{grid-template-columns:1fr}
+  .lp-signals-grid{grid-template-columns:1fr}
+  .lp-for-inner{grid-template-columns:1fr}
+  .lp-section-title{font-size:28px}
+}
+
 </style>
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <script>
@@ -823,7 +1020,161 @@ input[type=range]::-webkit-slider-thumb{
   </div>
 </div>
 
-<!-- HERO -->
+
+<!-- LANDING PAGE HERO -->
+<div class="landing">
+
+  <!-- HERO SECTION -->
+  <div class="lp-hero">
+    <div class="lp-hero-inner">
+      <div class="lp-eyebrow">
+        <span class="lp-eyebrow-dot"></span>
+        Structural Risk Engine for Paid Traffic
+      </div>
+      <h1 class="lp-title">Most Paid Traffic Structures<br>Collapse Before Operators<br><em>Realize It</em></h1>
+      <p class="lp-sub">Axovera reveals the collapse threshold of a paid traffic model before capital is deployed. Paid traffic environments are volatile. Conversion rates drift, auctions tighten, and margins compress. Most operators measure outcomes after the damage is done.</p>
+      <div class="lp-cta-row">
+        <a href="#scanner" class="lp-cta-btn">Analyze Your Structure →</a>
+        <span class="lp-cta-note">Free. No signup required.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROBLEM SECTION -->
+  <div class="lp-section">
+    <div class="lp-section-inner">
+      <div class="lp-section-label">The Structural Problem</div>
+      <h2 class="lp-section-title">The Problem Is Structural,<br>Not Tactical</h2>
+      <p class="lp-section-sub">Operators usually monitor outcome metrics. They describe what already happened. They do not reveal structural fragility.</p>
+      <div class="lp-metrics-grid">
+        <div class="lp-metric-item">
+          <div class="lp-metric-name">ROAS</div>
+          <div class="lp-metric-desc">Outcome metric</div>
+        </div>
+        <div class="lp-metric-item">
+          <div class="lp-metric-name">CPC</div>
+          <div class="lp-metric-desc">Outcome metric</div>
+        </div>
+        <div class="lp-metric-item">
+          <div class="lp-metric-name">CVR</div>
+          <div class="lp-metric-desc">Outcome metric</div>
+        </div>
+        <div class="lp-metric-item">
+          <div class="lp-metric-name">Revenue</div>
+          <div class="lp-metric-desc">Outcome metric</div>
+        </div>
+      </div>
+      <div class="lp-callout">
+        These metrics describe what already happened.<br>
+        They do not reveal <strong>structural fragility.</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLLAPSE MECHANISM -->
+  <div class="lp-section lp-section-dark">
+    <div class="lp-section-inner">
+      <div class="lp-section-label">Collapse Mechanism</div>
+      <h2 class="lp-section-title">Every Traffic Structure Has<br>a Collapse Point</h2>
+      <p class="lp-section-sub">Profitability in paid traffic depends on a fragile relationship between three variables. When volatility pushes these beyond a certain threshold — the structure collapses.</p>
+      <div class="lp-three-grid">
+        <div class="lp-three-item">
+          <div class="lp-three-num">01</div>
+          <div class="lp-three-name">Conversion Rate</div>
+          <div class="lp-three-desc">The percentage of clicks that become paying customers</div>
+        </div>
+        <div class="lp-three-item">
+          <div class="lp-three-num">02</div>
+          <div class="lp-three-name">Cost Per Click</div>
+          <div class="lp-three-desc">What you pay per click in the auction environment</div>
+        </div>
+        <div class="lp-three-item">
+          <div class="lp-three-num">03</div>
+          <div class="lp-three-name">Product Margin</div>
+          <div class="lp-three-desc">The net economics of each transaction after fulfillment</div>
+        </div>
+      </div>
+      <div class="lp-collapse-note">
+        Once the collapse trigger is crossed, each additional click <strong>destroys capital.</strong><br>
+        Most tools do not reveal this threshold. <strong>Axovera does.</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT AXOVERA EXAMINES -->
+  <div class="lp-section">
+    <div class="lp-section-inner">
+      <div class="lp-section-label">What Axovera Examines</div>
+      <h2 class="lp-section-title">Axovera Evaluates<br>Structural Stability</h2>
+      <p class="lp-section-sub">The system examines five structural signals that reveal the true health of your traffic model.</p>
+      <div class="lp-signals-grid">
+        <div class="lp-signal-item">
+          <div class="lp-signal-icon">⚡</div>
+          <div class="lp-signal-name">Collapse Trigger</div>
+          <div class="lp-signal-desc">The CPC level where the structure stops being economically viable.</div>
+        </div>
+        <div class="lp-signal-item">
+          <div class="lp-signal-icon">📏</div>
+          <div class="lp-signal-name">Distance to Collapse</div>
+          <div class="lp-signal-desc">How far current conditions are from the structural break point.</div>
+        </div>
+        <div class="lp-signal-item">
+          <div class="lp-signal-icon">🛡️</div>
+          <div class="lp-signal-name">Structural Buffer</div>
+          <div class="lp-signal-desc">A classification of stability under current economic conditions.</div>
+        </div>
+        <div class="lp-signal-item">
+          <div class="lp-signal-icon">⚡</div>
+          <div class="lp-signal-name">Volatility Shock</div>
+          <div class="lp-signal-desc">Simulation of conversion drops and CPC increases simultaneously.</div>
+        </div>
+        <div class="lp-signal-item">
+          <div class="lp-signal-icon">🔬</div>
+          <div class="lp-signal-name">Fragility Score</div>
+          <div class="lp-signal-desc">Measurement of how resilient the structure is under stress conditions.</div>
+        </div>
+        <div class="lp-signal-item">
+          <div class="lp-signal-icon">📊</div>
+          <div class="lp-signal-name">Scenario Matrix</div>
+          <div class="lp-signal-desc">9 stress scenarios mapped across CPC and CVR shifts. Pro feature.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHO IT IS FOR -->
+  <div class="lp-section lp-section-dark">
+    <div class="lp-section-inner lp-for-inner">
+      <div class="lp-for-text">
+        <div class="lp-section-label">Who Axovera Is For</div>
+        <h2 class="lp-section-title">Built for Operators<br>Who Manage Capital Risk</h2>
+        <p class="lp-section-sub">Axovera exists to examine structural capital risk before traffic is deployed.</p>
+        <div class="lp-for-list">
+          <div class="lp-for-item"><span class="lp-for-dot"></span>Paid traffic operators</div>
+          <div class="lp-for-item"><span class="lp-for-dot"></span>Performance marketers</div>
+          <div class="lp-for-item"><span class="lp-for-dot"></span>Media buyers managing capital risk</div>
+          <div class="lp-for-item"><span class="lp-for-dot"></span>Operators scaling CPC acquisition models</div>
+          <div class="lp-for-item"><span class="lp-for-dot"></span>Ecommerce store owners running paid ads</div>
+        </div>
+      </div>
+      <div class="lp-for-cta">
+        <div class="lp-for-cta-box">
+          <div class="lp-for-cta-label">FREE</div>
+          <div class="lp-for-cta-title">Examine Your Traffic Structure</div>
+          <div class="lp-for-cta-desc">Enter 4 numbers. Get your Structural Fragility Score instantly.</div>
+          <a href="#scanner" class="lp-cta-btn" style="display:inline-block;margin-top:16px">Run Analysis →</a>
+          <div class="lp-for-cta-note">No signup. No credit card. Free forever.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- END LANDING PAGE -->
+
+
+<!-- HERO (removed, replaced by landing) -->
+<!--
 <div class="hero">
   <div class="hero-eyebrow">
     <span class="hero-eyebrow-dot"></span>
@@ -838,6 +1189,7 @@ input[type=range]::-webkit-slider-thumb{
   <p class="hero-proof">Used by 1,000+ media buyers and ecom store owners</p>
 </div>
 
+-->
 <!-- HOW IT WORKS -->
 <div class="how-section">
   <div class="section-title">How It Works</div>
@@ -861,7 +1213,7 @@ input[type=range]::-webkit-slider-thumb{
 </div>
 
 <!-- MAIN CARD -->
-<div class="main-card">
+<div class="main-card" id="scanner">
 <div class="scanner-box">
 
   <!-- INPUTS -->
