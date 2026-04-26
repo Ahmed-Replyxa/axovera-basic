@@ -2294,11 +2294,11 @@ function getShareText(){
 function shareTwitter(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(getShareText()),'_blank');}
 function shareTelegram(){window.open('https://t.me/share/url?url=https://axovera.com&text='+encodeURIComponent(getShareText()),'_blank');}
 
-// PADDLE CHECKOUT — LIVE $5
+// PADDLE CHECKOUT — LIVE $2
 function openCheckout() {
   Paddle.Checkout.open({
     items: [{
-      priceId: 'pri_01kq5d98h5qj1ma6rrtka196rp',
+      priceId: 'pri_01kq5fgs65sbjz94rj8hdx53ae',
       quantity: 1
     }],
     settings: {
@@ -2306,6 +2306,11 @@ function openCheckout() {
       theme: 'dark',
       locale: 'en',
       successUrl: 'https://pro.axovera.com',
+    },
+    eventCallback: function(data) {
+      if (data.name === 'checkout.completed') {
+        window.location.href = 'https://pro.axovera.com';
+      }
     }
   });
 }
