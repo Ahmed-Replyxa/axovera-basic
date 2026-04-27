@@ -2305,7 +2305,7 @@ function openCheckout() {
       displayMode: 'overlay',
       theme: 'dark',
       locale: 'en',
-      successUrl: 'https://pro.axovera.com',
+      successUrl: 'https://pro.axovera.com?email={checkout.customer.email}',
     },
     eventCallback: function(data) {
       if (data.name === 'checkout.completed') {
